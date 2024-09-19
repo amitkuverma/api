@@ -1,6 +1,7 @@
 import swaggerJsDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { Application } from 'express';
+import config from './config'; // Import the config file
 
 const swaggerOptions = {
   swaggerDefinition: {
@@ -10,7 +11,7 @@ const swaggerOptions = {
       version: '1.0.0',
       description: 'API documentation',
     },
-    servers: [{ url: 'http://localhost:3000' }],
+    servers: [{ url: config.swaggerUrl }], // Use environment-specific URL
     components: {
       securitySchemes: {
         BearerAuth: {
