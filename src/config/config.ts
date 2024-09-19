@@ -20,7 +20,7 @@ const config: Record<Env, {
       dialect: 'mysql',
     },
     corsOrigin: '*',
-    swaggerUrl: `http://localhost:3000/api-docs`,
+    swaggerUrl: `http://localhost:3000/`,
   },
   development: {
     db: {
@@ -41,8 +41,8 @@ const config: Record<Env, {
       host: 'prod_db_host',
       dialect: 'mysql',
     },
-    corsOrigin: 'https://your-production-site.com',
-    swaggerUrl: `https://your-production-site.com/api-docs`,
+    corsOrigin: 'https://api-18dg.onrender.com/',
+    swaggerUrl: `https://api-18dg.onrender.com/api-docs`,
   },
 };
 
