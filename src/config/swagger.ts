@@ -11,6 +11,20 @@ const swaggerOptions = {
       description: 'API documentation',
     },
     servers: [{ url: 'http://localhost:3000' }],
+    components: {
+      securitySchemes: {
+        BearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
+    security: [
+      {
+        BearerAuth: [],  // Apply Bearer token globally
+      },
+    ],
   },
   apis: ['./src/routes/*.ts'],
 };

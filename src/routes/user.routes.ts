@@ -1,5 +1,8 @@
 import { Router } from 'express';
 import UserController from '../controllers/user.controller';
+import { login } from '../controllers/login.controller';
+import { authenticateToken } from '../middlewares/auth';
+
 
 const router = Router();
 
@@ -8,6 +11,8 @@ const router = Router();
  * /api/users:
  *   get:
  *     summary: Get all users
+ *     security:
+ *       - BearerAuth: []  # This adds the Bearer token requirement (LOCK)
  *     description: Retrieve a list of all users from the database
  *     responses:
  *       200:
@@ -32,7 +37,7 @@ const router = Router();
  *                     type: boolean
  *                     description: Whether the user is an admin
  */
-router.get('/', UserController.getAllUsers);
+router.get('/', authenticateToken, UserController.getAllUsers);
 
 /**
  * @openapi
@@ -69,49 +74,10 @@ router.post('/', UserController.createUser);
 
 /**
  * @openapi
- * /api/users/{id}:
- *   get:
- *     summary: Get a user by ID
- *     description: Retrieve a single user by their ID
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: User details
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                 name:
- *                   type: string
- *                 email:
- *                   type: string
- *                 isAdmin:
- *                   type: boolean
- *       404:
- *         description: User not found
- */
-//router.get('/:id', UserController.getUserById);
-
-/**
- * @openapi
- * /api/users/{id}:
- *   put:
- *     summary: Update a user by ID
- *     description: Update user details by their ID
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
+ * /api/users/login:
+ *   post:
+ *     summary: User login
+ *     description: Log in a user and return a JWT token
  *     requestBody:
  *       required: true
  *       content:
@@ -119,46 +85,24 @@ router.post('/', UserController.createUser);
  *           schema:
  *             type: object
  *             properties:
- *               name:
- *                 type: string
- *                 description: The user's name
  *               email:
  *                 type: string
- *                 description: The user's email address
  *               password:
  *                 type: string
- *                 description: The user's password
- *               isAdmin:
- *                 type: boolean
- *                 description: Whether the user is an admin
  *     responses:
  *       200:
- *         description: User updated successfully
- *       400:
- *         description: Bad request
- *       404:
- *         description: User not found
+ *         description: Login successful, returns a JWT token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   description: JWT token
+ *       401:
+ *         description: Invalid credentials
  */
-//router.put('/:id', UserController.updateUser);
-
-/**
- * @openapi
- * /api/users/{id}:
- *   delete:
- *     summary: Delete a user by ID
- *     description: Remove a user from the database by their ID
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       204:
- *         description: User deleted successfully
- *       404:
- *         description: User not found
- */
-//router.delete('/:id', UserController.deleteUser);
+router.post('/login', login);
 
 export default router;
