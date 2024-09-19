@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 app.use(corsMiddleware);
 
 // Routes
-app.use('/users', userRoutes);
+app.use('/api/users', userRoutes);
 
 // Swagger Docs
 setupSwagger(app);
@@ -19,6 +19,10 @@ setupSwagger(app);
 // Health check route
 app.get('/', (req, res) => {
   res.send('API is running');
+});
+// Catch-all 404 handler
+app.use((req, res) => {
+  res.status(404).json({ message: 'Not Found' });
 });
 
 export default app;
