@@ -31,7 +31,7 @@ const config: Record<Env, {
       dialect: 'mysql',
     },
     corsOrigin: 'https://api-18dg.onrender.com/',
-    swaggerUrl: `https://api-18dg.onrender.com/api-docs`,
+    swaggerUrl: `https://api-18dg.onrender.com/`,
   },
 };
 
