@@ -1,4 +1,4 @@
-type Env = 'localhost' | 'development' | 'production';
+type Env = 'development' | 'production';
 
 const config: Record<Env, { 
   db: { 
@@ -11,7 +11,7 @@ const config: Record<Env, {
   corsOrigin: string; 
   swaggerUrl: string; 
 }> = {
-  localhost: {
+  development: {
     db: {
       username: 'root',
       password: '',
@@ -22,17 +22,6 @@ const config: Record<Env, {
     corsOrigin: '*',
     swaggerUrl: `http://localhost:3000/`,
   },
-  development: {
-    db: {
-      username: 'dev_user',
-      password: 'dev_pass',
-      database: 'dev_db',
-      host: 'dev_db_host',
-      dialect: 'mysql',
-    },
-    corsOrigin: 'https://api-18dg.onrender.com/',
-    swaggerUrl: `https://api-18dg.onrender.com/`,
-  },
   production: {
     db: {
       username: 'prod_user',
@@ -42,9 +31,9 @@ const config: Record<Env, {
       dialect: 'mysql',
     },
     corsOrigin: 'https://api-18dg.onrender.com/',
-    swaggerUrl: `https://api-18dg.onrender.com/`,
+    swaggerUrl: `https://api-18dg.onrender.com/api-docs`,
   },
 };
 
-const currentEnv: Env = (process.env.NODE_ENV as Env) || 'localhost';
+const currentEnv: Env = (process.env.NODE_ENV as Env) || 'development';
 export default config[currentEnv];
