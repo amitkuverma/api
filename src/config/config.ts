@@ -24,14 +24,14 @@ const config: Record<Env, {
   },
   production: {
     db: {
-      username: 'sql12732393',
-      password: 'tC6TIGpLNs',
-      database: 'sql12732393',
-      host: 'sql12.freesqldatabase.com',
+      username: process.env.DB_USERNAME || '',
+      password: process.env.DB_PASSWORD || '',
+      database: process.env.DB_NAME || '',
+      host: process.env.DB_HOST || '',
       dialect: 'mysql',
     },
-    corsOrigin: '*',
-    swaggerUrl: `https://api-18dg.onrender.com/`,
+    corsOrigin: process.env.CORS_ORIGIN || '*',
+    swaggerUrl: process.env.SWAGGER_URL || 'https://api-18dg.onrender.com/',
   },
 };
 
