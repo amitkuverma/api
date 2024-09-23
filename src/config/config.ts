@@ -24,10 +24,10 @@ const config: Record<Env, {
   },
   production: {
     db: {
-      username: process.env.DB_USERNAME || '',
-      password: process.env.DB_PASSWORD || '',
-      database: process.env.DB_NAME || '',
-      host: process.env.DB_HOST || '',
+      username:  'sql12732393',
+      password:  'tC6TIGpLNs',
+      database:  'sql12732393',
+      host: 'sql12.freesqldatabase.com',
       dialect: 'mysql',
     },
     corsOrigin: process.env.CORS_ORIGIN || '*',
