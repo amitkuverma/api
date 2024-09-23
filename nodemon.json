@@ -1,6 +1,6 @@
+ 
 {
-    "watch": ["src"],
-    "ext": "ts",
-    "exec": "ts-node ./src/server.ts"
-  }
-  
+  "watch": ["src"],
+  "ext": "ts",
+  "exec": "node --max-old-space-size=4096 -r ts-node/register ./src/server.ts"
+}
