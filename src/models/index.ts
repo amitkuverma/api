@@ -1,9 +1,23 @@
 import sequelize from '../config/database';
 import User from './user/user.model';
+import OTPVerification from './user/otpVerification.model';
+import defineAssociationsDynamically from '../associations';
 
 const models = {
   User,
+  OTPVerification,
 };
+
+const modelAssociations = {
+  User: {
+    hasOne: [{ targetModel: 'OTPVerification', foreignKey: 'userId', as: 'otpVerification' }],
+  },
+  OTPVerification: {
+    belongsTo: [{ targetModel: 'User', foreignKey: 'userId', as: 'user' }],
+  },
+};
+
+defineAssociationsDynamically(models, modelAssociations);
 
 const initDb = async () => {
   try {
