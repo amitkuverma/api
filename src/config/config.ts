@@ -30,7 +30,7 @@ const config: Record<Env, {
       host: 'sql12.freesqldatabase.com',
       dialect: 'mysql',
     },
-    corsOrigin: process.env.CORS_ORIGIN || '*',
+    corsOrigin: '*',
     swaggerUrl: process.env.SWAGGER_URL || 'https://api-18dg.onrender.com/',
   },
 };
