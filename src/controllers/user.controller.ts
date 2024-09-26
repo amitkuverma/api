@@ -52,7 +52,7 @@ export default class UserController {
   static async getReferralChildren(req: Request, res: Response) {
     try {
       const { userId } = req.params;
-      const referralChildren = await UserService.getReferralChildren(Number(userId));
+      const referralChildren = await UserService.getReferralChildrenTaskCompleted(Number(userId));
 
       res.status(200).json(referralChildren);
     } catch (error:any) {

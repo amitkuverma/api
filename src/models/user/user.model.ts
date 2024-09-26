@@ -7,18 +7,18 @@ class User extends Model {
   public email!: string;
   public mobile!: string;
   public password!: string;
+  public image?: string; // Optional field for user image
   public referralCode?: string; // Optional field
   public parentUserId?: number | null; // Optional foreign key reference
   public otp?: string; // Optional OTP field
-  public emailVerified!: boolean;
-  public mobileVerified!: boolean;
-  public status!:string;
+  public emailVerified!: boolean; 
+  public status!: string;  
   public isAdmin!: boolean;
 }
 
 User.init({
   userId: {
-    type: DataTypes.INTEGER.UNSIGNED, // Ensure unsigned to match the foreign key
+    type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
@@ -48,19 +48,19 @@ User.init({
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
-  mobileVerified: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
+  image: { // New image column
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   parentUserId: {
     type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
     references: {
-      model: 'users', // Name of the table
-      key: 'userId',  // Correct foreign key reference to `userId`
+      model: 'users',
+      key: 'userId',
     },
-    onDelete: 'SET NULL', // Handle deletion of the parent user
-    onUpdate: 'CASCADE',  // Update on change
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
   },
   referralCode: {
     type: DataTypes.STRING,
@@ -70,6 +70,7 @@ User.init({
   status: {
     type: DataTypes.STRING,
     allowNull: true,
+    defaultValue: "panding"
   },
   isAdmin: {
     type: DataTypes.BOOLEAN,
@@ -79,7 +80,7 @@ User.init({
   sequelize,
   modelName: 'User',
   tableName: 'users',
-  timestamps: true, // To include `createdAt` and `updatedAt` fields
+  timestamps: true,
 });
 
 export default User;

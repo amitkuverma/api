@@ -1,6 +1,7 @@
+import Payment from '../models/user/payment.model';
 import User from '../models/user/user.model';
 import { hashPassword } from '../utils/authUtils';
-import { v4 as uuidv4 } from 'uuid'; // Install uuid if not already installed
+import PaymentService from '../services/payment.service'
 
 interface UserRegistrationData {
   name: string;
@@ -61,6 +62,14 @@ export default class UserService {
       const referrer: any = await User.findOne({ where: { referralCode } });
       if (referrer) {
         parentUserId = referrer.userId; // Set parent user ID if referral is valid
+
+        const payment: any = await PaymentService.findPaymentById(referrer.userId);
+
+        // Check if the referrer meets the bonus conditions
+        if (payment.status === 'completed') {
+          payment.totalAmount += 100; // Add 100 to referrer's initial amount
+          await payment.save(); // Save the updated referrer
+        }
       }
     }
 
@@ -101,26 +110,49 @@ export default class UserService {
     // Recursive function to fetch the referral chain
     async function fetchChain(currentUser: User): Promise<{ user: User; referrals: any[] }> {
       if (!currentUser) null;
+
+      // Find users who were referred by the current user
+      const referrals = await User.findAll({ where: { parentUserId: currentUser.userId } });
+
+      // For each referral, recursively fetch their referrals
+      const referralChain = await Promise.all(
+        referrals.map(async (referral) => await fetchChain(referral))
+      );
+
+      // Return the current user along with their referrals
+      return { user: currentUser, referrals: referralChain };
+    }
+
+    // Start the referral chain with the initial user
+    const initialUser: any = await User.findByPk(userId);
+    return await fetchChain(initialUser);
+  }
+
+  // Optional: Fetch the chain of referrals made by a user (all the users they referred)
+  static async getReferralChildrenTaskCompleted(userId: number): Promise<{ user: User | null; referrals: any[], completedSixInnerSharing: boolean }> {
+    // Recursive function to fetch the referral chain
+    async function fetchChain(currentUser: User | null): Promise<{ user: User | null; referrals: any[], completedSixInnerSharing: boolean }> {
+      if (!currentUser) return { user: null, referrals: [], completedSixInnerSharing: false };
   
       // Find users who were referred by the current user
       const referrals = await User.findAll({ where: { parentUserId: currentUser.userId } });
+  
+      // Check if the current user has completed 6 inner sharings
+      const completedSixInnerSharing = referrals.length >= 6;
   
       // For each referral, recursively fetch their referrals
       const referralChain = await Promise.all(
         referrals.map(async (referral) => await fetchChain(referral))
       );
   
-      // Return the current user along with their referrals
-      return { user: currentUser, referrals: referralChain };
+      // Return the current user along with their referrals and completion status
+      return { user: currentUser, referrals: referralChain, completedSixInnerSharing };
     }
   
     // Start the referral chain with the initial user
-    const initialUser:any = await User.findByPk(userId);
+    const initialUser: User | null = await User.findByPk(userId); // Explicitly define initialUser as User | null
+    if (!initialUser) throw new Error('User not found'); // Handle case where user is not found
+  
     return await fetchChain(initialUser);
-  }
-
-  // Optional: Fetch the chain of referrals made by a user (all the users they referred)
-  static async getReferralChildren(userId: number): Promise<User[]> {
-    return await User.findAll({ where: { parentUserId: userId } });
   }
 }

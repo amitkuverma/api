@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import OtpVerification from '../controllers/OtpVerification.controller';
+import OTPController from '../controllers/OtpVerification.controller';
 
 const otpRouter = Router();
 
@@ -11,21 +11,15 @@ const otpRouter = Router();
  *       type: object
  *       required:
  *         - userId
- *         - type
  *       properties:
  *         userId:
  *           type: integer
  *           description: The ID of the user to whom the OTP will be sent
- *         type:
- *           type: string
- *           enum: [email, mobile]
- *           description: The medium to send OTP (email or mobile)
  *     OtpVerification:
  *       type: object
  *       required:
  *         - userId
  *         - otp
- *         - type
  *       properties:
  *         userId:
  *           type: integer
@@ -33,18 +27,14 @@ const otpRouter = Router();
  *         otp:
  *           type: string
  *           description: The OTP to verify
- *         type:
- *           type: string
- *           enum: [email, mobile]
- *           description: The medium used for OTP (email or mobile)
  */
 
 /**
  * @openapi
  * /api/otp/send:
  *   post:
- *     summary: Send an OTP to the user's email or mobile
- *     description: Sends a One-Time Password (OTP) to the specified user
+ *     summary: Send an OTP to the user's email
+ *     description: Sends a One-Time Password (OTP) to the specified user's email
  *     requestBody:
  *       required: true
  *       content:
@@ -59,13 +49,13 @@ const otpRouter = Router();
  *       500:
  *         description: Internal server error
  */
-otpRouter.post('/send', OtpVerification.sendOtp);
+otpRouter.post('/send', OTPController.sendOtp);
 
 /**
  * @openapi
  * /api/otp/verify:
  *   post:
- *     summary: Verify the OTP sent to the user's email or mobile
+ *     summary: Verify the OTP sent to the user's email
  *     description: Verifies the provided OTP for the specified user
  *     requestBody:
  *       required: true
@@ -81,6 +71,6 @@ otpRouter.post('/send', OtpVerification.sendOtp);
  *       500:
  *         description: Internal server error
  */
-otpRouter.post('/verify', OtpVerification.verifyOtp);
+otpRouter.post('/verify', OTPController.verifyOtp);
 
 export default otpRouter;

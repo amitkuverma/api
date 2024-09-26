@@ -1,34 +1,39 @@
 import OtpService from '../services/otp.service'; // Adjust path as needed
 import { Request, Response } from 'express';
 import User from '../models/user/user.model';
-import OTPVerification from '../models/user/otpVerification.model';
 
-class OtpController {
-  // Method to send OTP
+class OTPController {
+  // Method to send OTP via email
   static async sendOtp(req: Request, res: Response) {
-    const { userId, type } = req.body;
+    const { userId } = req.body;
 
+    // Find the user by userId
     const user = await User.findByPk(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
+    // Generate a 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // Store OTP in database (assuming you have OtpVerification model)
-    await OTPVerification.create({ userId, otp, verified: false });
+    // Update the User model to store the OTP and set verified to false
+    await User.update(
+      { otp, emailVerified: false }, // Assuming you want to store OTP and mark email as not verified
+      { where: { userId } } // Find the user by userId
+    );
 
-    // Send OTP via email or mobile
-    await OtpService.sendOtp(type === 'email' ? user.email : user.mobile, otp, type);
+    // Send the OTP via email
+    await OtpService.sendOtp(user.email, otp);
 
-    return res.status(200).json({ message: 'OTP sent successfully' });
+    return res.status(200).json({ message: 'OTP sent successfully to email' });
   }
 
-  // Method to verify OTP
+  // Method to verify OTP for email
   static async verifyOtp(req: Request, res: Response) {
-    const { userId, otp, type } = req.body;
+    const { userId, otp } = req.body;
 
-    const otpVerification:any = await OTPVerification.findOne({
+    // Find the OTP entry in the database
+    const otpVerification: any = await User.findOne({
       where: { userId, otp, verified: false },
     });
 
@@ -36,20 +41,17 @@ class OtpController {
       return res.status(400).json({ message: 'Invalid or expired OTP' });
     }
 
+    // Mark the OTP as verified
     otpVerification.verified = true;
     await otpVerification.save();
 
-    const user:any = await User.findByPk(userId);
-    if (type === 'email') {
-      user.emailVerified = true;
-    } else if (type === 'mobile') {
-      user.mobileVerified = true;
-    }
-
+    // Mark user's email as verified
+    const user: any = await User.findByPk(userId);
+    user.emailVerified = true;
     await user.save();
 
-    return res.status(200).json({ message: 'OTP verified successfully' });
+    return res.status(200).json({ message: 'OTP verified successfully, email verified' });
   }
 }
 
-export default OtpController;
+export default OTPController;

@@ -1,21 +1,34 @@
 import sequelize from '../config/database';
 import User from './user/user.model';
-import OTPVerification from './user/otpVerification.model';
 import defineAssociationsDynamically from '../associations';
+import Payment from './user/payment.model';
 
 const models = {
   User,
-  OTPVerification,
+  Payment
 };
 
 const modelAssociations = {
   User: {
-    hasOne: [{ targetModel: 'OTPVerification', foreignKey: 'userId', as: 'otpVerification' }],
+    hasMany: [
+      {
+        targetModel: 'Payment',
+        foreignKey: 'userId',
+        as: 'payments' // Alias for the relationship
+      }
+    ]
   },
-  OTPVerification: {
-    belongsTo: [{ targetModel: 'User', foreignKey: 'userId', as: 'user' }],
-  },
+  Payment: {
+    belongsTo: [
+      {
+        targetModel: 'User',
+        foreignKey: 'userId',
+        as: 'user' // Alias for the reverse relationship
+      }
+    ]
+  }
 };
+
 
 defineAssociationsDynamically(models, modelAssociations);
 
