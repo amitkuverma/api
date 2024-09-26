@@ -39,7 +39,7 @@ const upload = multer({ storage });
  *             properties:
  *               userId:
  *                 type: integer
- *               amount:
+ *               totalAmount:
  *                 type: number
  *               paymentMethod:
  *                 type: string
