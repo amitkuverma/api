@@ -9,6 +9,13 @@ class PaymentService {
     }
     return payment;
   }
+  async getPaymentList() {
+    const payment = await Payment.findAll();
+    if (!payment) {
+      throw new Error('Payment not found');
+    }
+    return payment;
+  }
 
   // Upload receipt and update payment
   async uploadReceipt(paymentId: number, receiptPath: string | undefined) {

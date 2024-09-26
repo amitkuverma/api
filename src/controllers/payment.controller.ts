@@ -42,6 +42,14 @@ class PaymentController {
       res.status(500).json({ message: 'Failed to retrieve payments', error: error.message });
     }
   }
+  async getAllUserPayments(req: Request, res: Response) {
+    try {
+      const payments = await PaymentService.getPaymentList();
+      res.status(200).json(payments);
+    } catch (error:any) {
+      res.status(500).json({ message: 'Failed to retrieve payments', error: error.message });
+    }
+  }
 }
 
 export default new PaymentController();

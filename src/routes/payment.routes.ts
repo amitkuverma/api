@@ -1,6 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import PaymentController from '../controllers/payment.controller';
+import { authenticateToken } from '../middlewares/auth';
 
 const payRouter = express.Router();
 
@@ -55,7 +56,7 @@ const upload = multer({ storage });
  *       500:
  *         description: Failed to create payment
  */
-payRouter.post('/payments', PaymentController.createPayment);
+payRouter.post('/payments', authenticateToken, PaymentController.createPayment);
 
 /**
  * @swagger
@@ -76,7 +77,27 @@ payRouter.post('/payments', PaymentController.createPayment);
  *       500:
  *         description: Failed to retrieve payments
  */
-payRouter.get('/payments/user/:userId', PaymentController.getPaymentsByUserId);
+payRouter.get('/payment/:userId', authenticateToken, PaymentController.getPaymentsByUserId);
+/**
+ * @swagger
+ * /api/payment:
+ *   get:
+ *     summary: Get all payments for a user
+ *     tags: [Payments]
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         description: ID of the user to get payments for
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: List of payments
+ *       500:
+ *         description: Failed to retrieve payments
+ */
+payRouter.get('/payments', authenticateToken, PaymentController.getAllUserPayments);
 
 // Upload payment receipt
 /**
@@ -121,6 +142,6 @@ payRouter.get('/payments/user/:userId', PaymentController.getPaymentsByUserId);
  *       500:
  *         description: Server error
  */
-payRouter.post('/upload-receipt/:paymentId', upload.single('receipt'), PaymentController.uploadReceipt);
+payRouter.post('/upload-receipt/:paymentId', authenticateToken, upload.single('receipt'), PaymentController.uploadReceipt);
 
 export default payRouter;

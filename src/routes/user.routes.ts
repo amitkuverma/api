@@ -282,7 +282,7 @@ router.post('/verify', OtpVerification.verifyOtp);
  */
 
 // API to get the referral chain for a user
-router.get('/referral-chain/:userId', UserController.getReferralChain);
+router.get('/referral-chain/:userId', authenticateToken, UserController.getReferralChain);
 
 /**
  * @swagger
@@ -327,7 +327,7 @@ router.get('/referral-chain/:userId', UserController.getReferralChain);
  */
 
 // API to get the referral chain for a user
-router.get('/referrals/:userId', UserController.getUserReferralChainList);
+router.get('/referrals/:userId', authenticateToken, UserController.getUserReferralChainList);
 
 
 /**
@@ -373,6 +373,6 @@ router.get('/referrals/:userId', UserController.getUserReferralChainList);
  */
 
 // API to get all the referrals made by a user
-router.get('/referral-children/:userId', UserController.getReferralChildren);
+router.get('/referral-children/:userId', authenticateToken, UserController.getReferralChildren);
 
 export default router;
