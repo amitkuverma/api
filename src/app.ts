@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 app.use(corsMiddleware);
 
 // Routes
-app.use('/api/users', userRoutes);
+app.use('/api', userRoutes);
 app.use('/api/otp', otpRoutes);
 
 // Swagger Docs

@@ -38,11 +38,11 @@ const router = Router();
  *                     type: boolean
  *                     description: Whether the user is an admin
  */
-router.get('/', authenticateToken, UserController.getAllUsers);
+router.get('/users', authenticateToken, UserController.getAllUsers);
 
 /**
  * @swagger
- * /api/users/register/{referralCode}:
+ * /api/register/{referralCode}:
  *   post:
  *     summary: Register a new user
  *     description: Registers a new user by providing the necessary details. Optionally, a referral code can be provided.
@@ -109,7 +109,7 @@ router.post('/register/:referralCode?', UserController.createUser);
 
 /**
  * @openapi
- * /api/users/login:
+ * /api/login:
  *   post:
  *     summary: User login
  *     description: Log in a user and return a JWT token
@@ -180,7 +180,7 @@ router.post('/login', login);
  * @openapi
  * /api/otp/send:
  *   post:
- *     summary: Send an OTP to the user's email or mobile
+ *     summary: Send an OTP to the user's email
  *     description: Sends a One-Time Password (OTP) to the specified user
  *     requestBody:
  *       required: true
@@ -241,7 +241,7 @@ router.post('/verify', OtpVerification.verifyOtp);
 
 /**
  * @swagger
- * /api/users/referral-chain/{userId}:
+ * /api/referral-chain/{userId}:
  *   get:
  *     summary: Get the referral chain for a user
  *     description: Retrieve the entire referral chain for a specific user, showing the hierarchy of who referred whom.
@@ -286,7 +286,7 @@ router.get('/referral-chain/:userId', UserController.getReferralChain);
 
 /**
  * @swagger
- * /api/users/referrals/{userId}:
+ * /api/referrals/{userId}:
  *   get:
  *     summary: Get the referral chain for a user
  *     description: Retrieve the entire referral chain for a specific user, showing the hierarchy of who referred whom.
@@ -327,12 +327,12 @@ router.get('/referral-chain/:userId', UserController.getReferralChain);
  */
 
 // API to get the referral chain for a user
-router.get('/referrals/:userId', UserController.getReferralChainStartToEnd);
+router.get('/referrals/:userId', UserController.getUserReferralChainList);
 
 
 /**
  * @swagger
- * /api/users/referral-children/{userId}:
+ * /api/referral-children/{userId}:
  *   get:
  *     summary: Get the referrals made by a user
  *     description: Retrieve all the users that were referred by a specific user.

@@ -79,48 +79,45 @@ export default class UserService {
     return newUser; // Return the newly created user
   }
 
-static async getReferralChain(userId: number): Promise<{ user: User; referrals: User[] }[]> {
-  const referralChain: { user: User; referrals: User[] }[] = [];
-  let currentUser: any = await User.findByPk(userId);
-
-  while (currentUser) {
-    // Find users who were referred by the current user
-    const referrals = await User.findAll({ where: { parentUserId: currentUser.userId } });
-    
-    // Push the current user and their referrals into the chain
-    referralChain.push({ user: currentUser, referrals });
-
-    // Move to the next user in the chain (if any)
-    currentUser = referrals.length > 0 ? referrals[0] : null; // You can change this logic based on your needs
-  }
-
-  return referralChain; // This will give you a structured array with users and their referrals
-}
-
-
-  static async getReferralChainStartToEnd(userId: number): Promise<User[]> {
-    const referralChain: User[] = [];
+  static async getReferralChain(userId: number): Promise<{ user: User; referrals: User[] }[]> {
+    const referralChain: { user: User; referrals: User[] }[] = [];
     let currentUser: any = await User.findByPk(userId);
 
-    // Traverse the referral chain downwards
     while (currentUser) {
-        referralChain.push(currentUser); // Add the current user to the chain
+      // Find users who were referred by the current user
+      const referrals = await User.findAll({ where: { parentUserId: currentUser.userId } });
 
-        // Find the next user who was referred by the current user
-        const nextUser: any = await User.findOne({ where: { parentUserId: currentUser.userId } });
+      // Push the current user and their referrals into the chain
+      referralChain.push({ user: currentUser, referrals });
 
-        if (nextUser) {
-            currentUser = nextUser;  // Move to the next user in the chain
-        } else {
-            break;  // Break the loop if no more users are found
-        }
+      // Move to the next user in the chain (if any)
+      currentUser = referrals.length > 0 ? referrals[0] : null; // You can change this logic based on your needs
     }
 
-    return referralChain;
+    return referralChain; // This will give you a structured array with users and their referrals
   }
 
-
-
+  static async getUserReferralChainList(userId: number): Promise<{ user: User; referrals: any[] }> {
+    // Recursive function to fetch the referral chain
+    async function fetchChain(currentUser: User): Promise<{ user: User; referrals: any[] }> {
+      if (!currentUser) null;
+  
+      // Find users who were referred by the current user
+      const referrals = await User.findAll({ where: { parentUserId: currentUser.userId } });
+  
+      // For each referral, recursively fetch their referrals
+      const referralChain = await Promise.all(
+        referrals.map(async (referral) => await fetchChain(referral))
+      );
+  
+      // Return the current user along with their referrals
+      return { user: currentUser, referrals: referralChain };
+    }
+  
+    // Start the referral chain with the initial user
+    const initialUser:any = await User.findByPk(userId);
+    return await fetchChain(initialUser);
+  }
 
   // Optional: Fetch the chain of referrals made by a user (all the users they referred)
   static async getReferralChildren(userId: number): Promise<User[]> {

@@ -33,12 +33,12 @@ export default class UserController {
     }
   }
 
-  static async getReferralChainStartToEnd(req: Request, res: Response) {
+  static async getUserReferralChainList(req: Request, res: Response) {
     try {
-      const { referrerId } = req.params; // Get the userId from request params
-      const referralChain = await UserService.getReferralChain(Number(referrerId));
+      const { userId } = req.params; // Get the userId from request params
+      const referralChain = await UserService.getUserReferralChainList(Number(userId));
 
-      if (!referralChain.length) {
+      if (!referralChain) {
         return res.status(404).json({ message: "No referral chain found" });
       }
 
