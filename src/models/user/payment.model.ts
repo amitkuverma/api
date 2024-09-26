@@ -1,31 +1,32 @@
-import { DataTypes, Model } from 'sequelize';
+import { Model, DataTypes } from 'sequelize';
 import sequelize from '../../config/database';
+import User from './user.model'; // Ensure the import path is correct
 
 class Payment extends Model {
-  public paymentId!: number;
+  public payId!: number;
   public userId!: number;
-  public amount!: number;
+  public totalAmount!: number;
   public paymentMethod!: string;
   public transactionId!: string;
   public status!: string;
-  public receipt?: string; // New field to store the receipt path
-  public createdAt!: Date;
+  public receipt?: string;
 }
 
 Payment.init({
-  paymentId: {
-    type: DataTypes.INTEGER.UNSIGNED,
-    primaryKey: true,
+  payId: {
+    type: DataTypes.INTEGER,
     autoIncrement: true,
+    primaryKey: true,
   },
   userId: {
-    type: DataTypes.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED, // Make sure this matches the User model
     allowNull: false,
     references: {
-      model: 'users',
+      model: 'users', // This should refer to the table name, not the model
       key: 'userId',
     },
     onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   },
   totalAmount: {
     type: DataTypes.FLOAT,
@@ -38,21 +39,20 @@ Payment.init({
   transactionId: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
   },
   status: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  receipt: { // New receipt column
+  receipt: {
     type: DataTypes.STRING,
-    allowNull: true, // Optional field
+    allowNull: true,
   },
 }, {
   sequelize,
   modelName: 'Payment',
   tableName: 'payments',
-  timestamps: true,
+  timestamps: true, // Optional: if you want createdAt and updatedAt
 });
 
 export default Payment;

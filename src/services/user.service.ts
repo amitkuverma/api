@@ -63,7 +63,7 @@ export default class UserService {
       if (referrer) {
         parentUserId = referrer.userId; // Set parent user ID if referral is valid
 
-        const payment: any = await PaymentService.findPaymentById(referrer.userId);
+        const payment: any = await PaymentService.findPaymentByUserId(referrer.userId);
 
         // Check if the referrer meets the bonus conditions
         if (payment.status === 'completed') {

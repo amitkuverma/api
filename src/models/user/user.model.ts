@@ -56,7 +56,7 @@ User.init({
     type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
     references: {
-      model: 'users',
+      model: 'users', // This should refer to the table name, not the model
       key: 'userId',
     },
     onDelete: 'SET NULL',
@@ -70,7 +70,7 @@ User.init({
   status: {
     type: DataTypes.STRING,
     allowNull: true,
-    defaultValue: "panding"
+    defaultValue: "pending" // Fixed typo here
   },
   isAdmin: {
     type: DataTypes.BOOLEAN,

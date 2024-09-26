@@ -1,25 +1,20 @@
 import Payment from '../models/user/payment.model';
 
 class PaymentService {
-  // Find a payment by its ID
-  async findPaymentById(paymentId: number) {
-    const payment = await Payment.findByPk(paymentId);
-    if (!payment) {
-      throw new Error('Payment not found');
-    }
-    return payment;
-  }
-  async getPaymentList() {
-    const payment = await Payment.findAll();
+  async findPaymentByUserId(userId: number) {
+    const payment = await Payment.findByPk(userId);
     if (!payment) {
       throw new Error('Payment not found');
     }
     return payment;
   }
 
-  // Upload receipt and update payment
-  async uploadReceipt(paymentId: number, receiptPath: string | undefined) {
-    const payment = await this.findPaymentById(paymentId);
+  async getPaymentList() {
+    return await Payment.findAll();
+  }
+
+  async uploadReceipt(userId: number, receiptPath: string | undefined) {
+    const payment = await this.findPaymentByUserId(userId);
     payment.receipt = receiptPath;
     await payment.save();
     return payment;
@@ -27,14 +22,23 @@ class PaymentService {
 
   async createPayment(data: {
     userId: number;
-    amount: number;
+    totalAmount: number;
     paymentMethod: string;
     transactionId: string;
     status: string;
     receipt?: string;
-  }): Promise<Payment> {
-    const payment = await Payment.create(data);
-    return payment;
+  }) {
+    return await Payment.create(data);
+  }
+
+  async updatePayment(userId: number, updateData: Partial<Payment>) {
+    const payment = await Payment.findByPk(userId);
+
+    if (!payment) {
+      throw new Error('Payment not found');
+    }
+
+    return await payment.update(updateData);
   }
 }
 
