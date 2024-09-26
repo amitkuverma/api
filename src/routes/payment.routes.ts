@@ -60,7 +60,7 @@ payRouter.post('/payments', authenticateToken, PaymentController.createPayment);
 
 /**
  * @swagger
- * /api/payments/user/{userId}:
+ * /api/payments/{userId}:
  *   get:
  *     summary: Get all payments for a user
  *     tags: [Payments]
@@ -80,7 +80,7 @@ payRouter.post('/payments', authenticateToken, PaymentController.createPayment);
 payRouter.get('/payment/:userId', authenticateToken, PaymentController.getPaymentsByUserId);
 /**
  * @swagger
- * /api/payment:
+ * /api/payments:
  *   get:
  *     summary: Get all payments for a user
  *     tags: [Payments]
