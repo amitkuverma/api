@@ -1,0 +1,46 @@
+import { Request, Response } from 'express';
+import AccountDetailsService from '../services/account.service';
+
+class AccountDetailsController {
+  async createAccountDetails(req: Request, res: Response) {
+    try {
+      const accountDetails = await AccountDetailsService.createAccountDetails(req.body);
+      res.status(201).json(accountDetails);
+    } catch (error) {
+      res.status(400).json({ error: 'Unable to create account details' });
+    }
+  }
+
+  async getAccountDetails(req: Request, res: Response) {
+    try {
+      const accountDetails = await AccountDetailsService.getAccountDetailsById(Number(req.params.userId));
+      if (accountDetails) {
+        res.json(accountDetails);
+      } else {
+        res.status(404).json({ error: 'Account details not found' });
+      }
+    } catch (error) {
+      res.status(400).json({ error: 'Unable to retrieve account details' });
+    }
+  }
+
+  async updateAccountDetails(req: Request, res: Response) {
+    try {
+      const updated = await AccountDetailsService.updateAccountDetails(Number(req.params.userId), req.body);
+      res.json({ message: 'Account details updated', updated });
+    } catch (error) {
+      res.status(400).json({ error: 'Unable to update account details' });
+    }
+  }
+
+  async deleteAccountDetails(req: Request, res: Response) {
+    try {
+      await AccountDetailsService.deleteAccountDetails(Number(req.params.userId));
+      res.json({ message: 'Account details deleted' });
+    } catch (error) {
+      res.status(400).json({ error: 'Unable to delete account details' });
+    }
+  }
+}
+
+export default new AccountDetailsController();
