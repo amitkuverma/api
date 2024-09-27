@@ -11,6 +11,19 @@ class AccountDetailsController {
     }
   }
 
+  async getAllAccountDetails(req: Request, res: Response) {
+    try {
+      const accountDetails = await AccountDetailsService.getAllAccountDetails();
+      if (accountDetails) {
+        res.json(accountDetails);
+      } else {
+        res.status(404).json({ error: 'Account details not found' });
+      }
+    } catch (error) {
+      res.status(400).json({ error: 'Unable to retrieve account details' });
+    }
+  }
+  
   async getAccountDetails(req: Request, res: Response) {
     try {
       const accountDetails = await AccountDetailsService.getAccountDetailsById(Number(req.params.userId));

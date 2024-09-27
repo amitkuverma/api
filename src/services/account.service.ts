@@ -5,6 +5,10 @@ class AccountDetailsService {
     return AccountDetails.create(data);
   }
 
+  async getAllAccountDetails() {
+    return AccountDetails.findAll();
+  }
+
   async getAccountDetailsById(id: number) {
     return AccountDetails.findByPk(id);
   }
