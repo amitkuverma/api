@@ -46,7 +46,7 @@ accRouter.post('/account', AccountDetailsController.createAccountDetails);
  *     tags: [AccountDetails]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: userId
  *         schema:
  *           type: integer
  *         required: true
@@ -67,7 +67,7 @@ accRouter.get('/account/:userId', AccountDetailsController.getAccountDetails);
  *     tags: [AccountDetails]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: userId
  *         schema:
  *           type: integer
  *         required: true
@@ -94,7 +94,7 @@ accRouter.put('/account/:userId', AccountDetailsController.updateAccountDetails)
  *     tags: [AccountDetails]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: userId
  *         schema:
  *           type: integer
  *         required: true
