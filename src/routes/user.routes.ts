@@ -4,7 +4,6 @@ import { login } from '../controllers/login.controller';
 import { authenticateToken } from '../middlewares/auth';
 import OtpVerification from '../controllers/OtpVerification.controller';
 
-
 const router = Router();
 
 /**
@@ -14,10 +13,10 @@ const router = Router();
  *     summary: Get all users
  *     security:
  *       - BearerAuth: []  # This adds the Bearer token requirement (LOCK)
- *     description: Retrieve a list of all users from the database
+ *     description: Retrieve a list of all users from the database.
  *     responses:
  *       200:
- *         description: A list of users
+ *         description: A list of users.
  *         content:
  *           application/json:
  *             schema:
@@ -27,31 +26,121 @@ const router = Router();
  *                 properties:
  *                   id:
  *                     type: integer
- *                     description: The user ID
+ *                     description: The user ID.
  *                   name:
  *                     type: string
- *                     description: The user's name
+ *                     description: The user's name.
  *                   email:
  *                     type: string
- *                     description: The user's email address
+ *                     description: The user's email address.
  *                   isAdmin:
  *                     type: boolean
- *                     description: Whether the user is an admin
+ *                     description: Whether the user is an admin.
  */
 router.get('/users', authenticateToken, UserController.getAllUsers);
 
 /**
- * @swagger
+ * @openapi
+ * /api/users/{userId}:
+ *   get:
+ *     summary: Get user by ID
+ *     security:
+ *       - BearerAuth: []  # This adds the Bearer token requirement (LOCK)
+ *     description: Retrieve a user by their ID from the database.
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         description: ID of the user to retrieve.
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: User found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: The user's ID.
+ *                 name:
+ *                   type: string
+ *                   description: The user's name.
+ *                 email:
+ *                   type: string
+ *                   description: The user's email.
+ *                 mobile:
+ *                   type: string
+ *                   description: The user's mobile number.
+ *                 status:
+ *                   type: string
+ *                   description: The user's status.
+ *       404:
+ *         description: User not found.
+ *       500:
+ *         description: Server error.
+ */
+router.get('/users/:userId', authenticateToken, UserController.getUserById);
+
+/**
+ * @openapi
+ * /api/users/{userId}/status:
+ *   put:
+ *     summary: Update user status
+ *     security:
+ *       - BearerAuth: []  # This adds the Bearer token requirement (LOCK)
+ *     description: Update the status of a user by their ID.
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         description: ID of the user to update.
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 description: The new status of the user.
+ *     responses:
+ *       200:
+ *         description: User status updated.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: The user's ID.
+ *                 status:
+ *                   type: string
+ *                   description: The updated status.
+ *       404:
+ *         description: User not found.
+ *       500:
+ *         description: Server error.
+ */
+router.put('/users/:userId/status', authenticateToken, UserController.updateUserStatus);
+
+/**
+ * @openapi
  * /api/register/{referralCode}:
  *   post:
  *     summary: Register a new user
  *     description: Registers a new user by providing the necessary details. Optionally, a referral code can be provided.
- *     tags: [User]
  *     parameters:
  *       - name: referralCode
  *         in: path
  *         required: false
- *         description: An optional referral code from another user
+ *         description: An optional referral code from another user.
  *         schema:
  *           type: string
  *     requestBody:
@@ -68,19 +157,19 @@ router.get('/users', authenticateToken, UserController.getAllUsers);
  *             properties:
  *               name:
  *                 type: string
- *                 description: The user's name
+ *                 description: The user's name.
  *               email:
  *                 type: string
- *                 description: The user's email address
+ *                 description: The user's email address.
  *               mobile:
  *                 type: string
- *                 description: The user's mobile number
+ *                 description: The user's mobile number.
  *               password:
  *                 type: string
- *                 description: The user's password
+ *                 description: The user's password.
  *     responses:
  *       201:
- *         description: User created successfully
+ *         description: User created successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -88,31 +177,30 @@ router.get('/users', authenticateToken, UserController.getAllUsers);
  *               properties:
  *                 id:
  *                   type: integer
- *                   description: The user's ID
+ *                   description: The user's ID.
  *                 name:
  *                   type: string
- *                   description: The user's name
+ *                   description: The user's name.
  *                 email:
  *                   type: string
- *                   description: The user's email
+ *                   description: The user's email.
  *                 referralCode:
  *                   type: string
- *                   description: The generated referral code for the new user
+ *                   description: The generated referral code for the new user.
  *                 otp:
  *                   type: string
- *                   description: OTP sent for mobile verification
+ *                   description: OTP sent for mobile verification.
  *       400:
- *         description: Bad request
+ *         description: Bad request.
  */
 router.post('/register/:referralCode?', UserController.createUser);
-
 
 /**
  * @openapi
  * /api/login:
  *   post:
  *     summary: User login
- *     description: Log in a user and return a JWT token
+ *     description: Log in a user and return a JWT token.
  *     requestBody:
  *       required: true
  *       content:
@@ -126,7 +214,7 @@ router.post('/register/:referralCode?', UserController.createUser);
  *                 type: string
  *     responses:
  *       200:
- *         description: Login successful, returns a JWT token
+ *         description: Login successful, returns a JWT token.
  *         content:
  *           application/json:
  *             schema:
@@ -134,9 +222,9 @@ router.post('/register/:referralCode?', UserController.createUser);
  *               properties:
  *                 token:
  *                   type: string
- *                   description: JWT token
+ *                   description: JWT token.
  *       401:
- *         description: Invalid credentials
+ *         description: Invalid credentials.
  */
 router.post('/login', login);
 

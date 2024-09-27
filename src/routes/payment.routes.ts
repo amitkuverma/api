@@ -1,44 +1,24 @@
-import express from 'express';
-import multer from 'multer';
+import { Router } from 'express';
 import PaymentController from '../controllers/payment.controller';
 import { authenticateToken } from '../middlewares/auth';
-import path from 'path';
-import fs from 'fs';
 
-const payRouter = express.Router();
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadPath = path.join(__dirname, '../../uploads/receipts');
-    // Ensure directory exists
-    if (!fs.existsSync(uploadPath)) {
-      fs.mkdirSync(uploadPath, { recursive: true });
-    }
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    const fileName = `${Date.now()}-${file.originalname}`;
-    cb(null, fileName);
-  }
-});
-
-const upload = multer({ storage });
+const paymentRouter = Router();
 
 /**
  * @swagger
  * tags:
  *   name: Payments
- *   description: Payment management
+ *   description: API to manage payments
  */
 
 /**
  * @swagger
- * /api/payments:
+ * /api/payment:
  *   post:
  *     summary: Create a new payment
  *     tags: [Payments]
  *     security:
- *       - BearerAuth: []  # This adds the Bearer token requirement (LOCK)
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -54,60 +34,69 @@ const upload = multer({ storage });
  *                 type: string
  *               transactionId:
  *                 type: string
- *               status:
- *                 type: string
  *     responses:
  *       201:
  *         description: Payment created successfully
- *       401:
- *         description: Unauthorized
+ *       400:
+ *         description: Payment already exists
  *       500:
- *         description: Server error
+ *         description: Failed to create payment
  */
-payRouter.post('/payments', authenticateToken, PaymentController.createPayment);
+paymentRouter.post('/payment', authenticateToken, PaymentController.createPayment);
 
 /**
  * @swagger
  * /api/payment/{userId}:
- *   get:
- *     summary: Get payments by user ID
+ *   put:
+ *     summary: Update an existing payment
  *     tags: [Payments]
  *     security:
- *       - BearerAuth: []  # This adds the Bearer token requirement (LOCK)
+ *       - bearerAuth: []
  *     parameters:
- *       - name: userId
- *         in: path
- *         required: true
- *         description: ID of the user
+ *       - in: path
+ *         name: userId
  *         schema:
  *           type: integer
+ *         required: true
+ *         description: User ID of the payment to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               totalAmount:
+ *                 type: number
+ *               paymentMethod:
+ *                 type: string
+ *               transactionId:
+ *                 type: string
  *     responses:
  *       200:
- *         description: Payments retrieved successfully
- *       401:
- *         description: Unauthorized
+ *         description: Payment updated successfully
  *       404:
- *         description: Payments not found
+ *         description: Payment not found
  *       500:
- *         description: Server error
+ *         description: Failed to update payment
  */
-payRouter.get('/payment/:userId', authenticateToken, PaymentController.getPaymentsByUserId);
+paymentRouter.put('/payment/:userId', authenticateToken, PaymentController.updatePayment);
 
 /**
  * @swagger
- * /api/upload/{userId}:
+ * /api/payment/{userId}/upload-receipt:
  *   post:
- *     summary: Upload a payment receipt
+ *     summary: Upload a receipt and update payment
  *     tags: [Payments]
  *     security:
- *       - BearerAuth: []  # This adds the Bearer token requirement (LOCK)
+ *       - bearerAuth: []
  *     parameters:
- *       - name: userId
- *         in: path
- *         required: true
- *         description: ID of the user
+ *       - in: path
+ *         name: userId
  *         schema:
  *           type: integer
+ *         required: true
+ *         description: User ID of the payment
  *     requestBody:
  *       required: true
  *       content:
@@ -121,11 +110,86 @@ payRouter.get('/payment/:userId', authenticateToken, PaymentController.getPaymen
  *     responses:
  *       200:
  *         description: Receipt uploaded successfully
- *       401:
- *         description: Unauthorized
+ *       400:
+ *         description: Receipt file is required
  *       500:
- *         description: Server error
+ *         description: Failed to upload receipt
  */
-payRouter.post('/upload/:userId', authenticateToken, upload.single('receipt'), PaymentController.uploadReceipt);
+paymentRouter.post('/payment/:userId/upload-receipt', authenticateToken, PaymentController.uploadReceipt);
 
-export default payRouter;
+/**
+ * @swagger
+ * /api/payment/{userId}:
+ *   get:
+ *     summary: Get all payments for a specific user
+ *     tags: [Payments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: User ID to retrieve payments for
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved payments
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   userId:
+ *                     type: integer
+ *                   totalAmount:
+ *                     type: number
+ *                   paymentMethod:
+ *                     type: string
+ *                   transactionId:
+ *                     type: string
+ *                   status:
+ *                     type: string
+ *                     enum: [completed, pending, failed]
+ *       500:
+ *         description: Failed to retrieve payments
+ */
+paymentRouter.get('/payment/:userId', authenticateToken, PaymentController.getPaymentsByUserId);
+
+/**
+ * @swagger
+ * /api/payments:
+ *   get:
+ *     summary: Get all user payments
+ *     tags: [Payments]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved all payments
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   userId:
+ *                     type: integer
+ *                   totalAmount:
+ *                     type: number
+ *                   paymentMethod:
+ *                     type: string
+ *                   transactionId:
+ *                     type: string
+ *                   status:
+ *                     type: string
+ *                     enum: [completed, pending, failed]
+ *       500:
+ *         description: Failed to retrieve payments
+ */
+paymentRouter.get('/payments', authenticateToken, PaymentController.getAllUserPayments);
+
+export default paymentRouter;
