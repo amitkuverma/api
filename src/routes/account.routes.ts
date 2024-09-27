@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import AccountDetailsController from '../controllers/account.controller';
+import { authenticateToken } from '../middlewares/auth';
 
 const accRouter = Router();
 
@@ -36,7 +37,7 @@ const accRouter = Router();
  *       400:
  *         description: Bad Request
  */
-accRouter.post('/account', AccountDetailsController.createAccountDetails);
+accRouter.post('/account', authenticateToken, AccountDetailsController.createAccountDetails);
 
 /**
  * @swagger
@@ -57,7 +58,7 @@ accRouter.post('/account', AccountDetailsController.createAccountDetails);
  *       404:
  *         description: Account details not found
  */
-accRouter.get('/account/:userId', AccountDetailsController.getAccountDetails);
+accRouter.get('/account/:userId', authenticateToken, AccountDetailsController.getAccountDetails);
 
 /**
  * @swagger
@@ -84,7 +85,7 @@ accRouter.get('/account/:userId', AccountDetailsController.getAccountDetails);
  *       400:
  *         description: Bad request
  */
-accRouter.put('/account/:userId', AccountDetailsController.updateAccountDetails);
+accRouter.put('/account/:userId', authenticateToken, AccountDetailsController.updateAccountDetails);
 
 /**
  * @swagger
@@ -105,6 +106,6 @@ accRouter.put('/account/:userId', AccountDetailsController.updateAccountDetails)
  *       400:
  *         description: Unable to delete account details
  */
-accRouter.delete('/account/:userId', AccountDetailsController.deleteAccountDetails);
+accRouter.delete('/account/:userId', authenticateToken, AccountDetailsController.deleteAccountDetails);
 
 export default accRouter;
