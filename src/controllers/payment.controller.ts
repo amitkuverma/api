@@ -7,9 +7,6 @@ class PaymentController {
     try {
       const { userId } = req.params;
       const receiptPath = req.file?.path;
-      console.log(userId)
-      console.log(req.file)
-      console.log(req.file?.path)
 
       if (!receiptPath) {
         return res.status(400).json({ message: 'Receipt file is required' });

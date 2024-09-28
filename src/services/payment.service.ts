@@ -16,6 +16,7 @@ class PaymentService {
   async uploadReceipt(userId: number, receiptPath: string | undefined) {
     const payment = await this.findPaymentByUserId(userId);
     payment.receipt = receiptPath;
+    payment.status = "receipt";
     await payment.save();
     return payment;
   }
