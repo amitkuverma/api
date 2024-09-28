@@ -7,6 +7,9 @@ class PaymentController {
     try {
       const { userId } = req.params;
       const receiptPath = req.file?.path;
+      console.log(userId)
+      console.log(req.file)
+      console.log(req.file?.path)
 
       if (!receiptPath) {
         return res.status(400).json({ message: 'Receipt file is required' });
@@ -27,15 +30,7 @@ class PaymentController {
   // Create a new payment
   async createPayment(req: Request, res: Response) {
     try {
-      const { userId, totalAmount, paymentMethod, transactionId } = req.body;
-
-      // Ensure that there is no existing payment for the user before creating
-      const existingPayment = await PaymentService.findPaymentByUserId(userId);
-      if (existingPayment) {
-        return res.status(400).json({
-          message: 'Payment already exists for this user. Use update endpoint instead.',
-        });
-      }
+      const { userId, totalAmount, paymentMethod, transactionId, status } = req.body;
 
       // Create new payment
       const newPayment = await PaymentService.createPayment({
@@ -43,7 +38,7 @@ class PaymentController {
         totalAmount,
         paymentMethod,
         transactionId,
-        status: 'completed',
+        status,
       });
 
       return res.status(201).json({

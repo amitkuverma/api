@@ -1,3 +1,4 @@
+import { where } from 'sequelize';
 import AccountDetails from '../models/user/account.model';
 
 class AccountDetailsService {
@@ -10,7 +11,7 @@ class AccountDetailsService {
   }
 
   async getAccountDetailsById(id: number) {
-    return AccountDetails.findByPk(id);
+    return AccountDetails.findOne({ where: { userId: id } });
   }
 
   async updateAccountDetails(id: number, data: any) {

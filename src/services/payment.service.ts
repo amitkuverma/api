@@ -2,9 +2,9 @@ import Payment from '../models/user/payment.model';
 
 class PaymentService {
   async findPaymentByUserId(userId: number) {
-    const payment = await Payment.findByPk(userId);
+    const payment = await Payment.findOne({ where: { userId }});
     if (!payment) {
-      throw new Error('Payment not found');
+      throw new Error('User data not found in payment table');
     }
     return payment;
   }
