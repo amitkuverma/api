@@ -37,7 +37,7 @@ export default class UserService {
 
     // If we have reached the 7th level, return the user details
     if (depth === 7) {
-        return currentUser; // Return the 7th parent user details
+      return currentUser; // Return the 7th parent user details
     }
 
     // If the current user has no parent (parentUserId is null), stop the recursion
@@ -45,7 +45,7 @@ export default class UserService {
 
     // Recursive call to find the next parent user, incrementing the depth
     return await this.get7thParentUserDetails(currentUser.parentUserId, depth + 1);
-}
+  }
 
 
 
@@ -61,16 +61,17 @@ export default class UserService {
     }
 
     if (referral) {
-      const parentUsers:any = await this.get7thParentUserDetails(userId);
-      console.log("parentUsers", parentUsers.userId)
-      const referrralList = await UserService.getReferralChildrenTaskCompleted(parentUsers.parentUserId);
-      const userSeven = referrralList.referrals?.map((res: any) => res.liveReferralCount == 7);
-      console.log("userSeven", userSeven)
-      if (userSeven.includes(true)) {
-        const parentReferral = await Payment.findOne({ where: { userId: referrralList.user?.userId } });
-        if (parentReferral) {
-          parentReferral.earnAmount += 100;
-          await parentReferral.save();
+      const parentUsers: any = await this.get7thParentUserDetails(userId);
+      if (parentUsers) {
+        const referrralList = await UserService.getReferralChildrenTaskCompleted(parentUsers.parentUserId);
+        const userSeven = referrralList.referrals?.map((res: any) => res.liveReferralCount == 7);
+        if (userSeven.includes(true)) {
+          const parentReferral = await Payment.findOne({ where: { userId: referrralList.user?.userId } });
+          if (parentReferral) {
+            parentReferral.earnAmount += 100;
+            await parentReferral.save();
+          }
+
         }
 
       }
