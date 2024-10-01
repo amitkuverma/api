@@ -5,6 +5,7 @@ import User from './user.model'; // Ensure the import path is correct
 class Payment extends Model {
   public payId!: number;
   public userId!: number;
+  public earnAmount!: number;
   public totalAmount!: number;
   public paymentMethod!: string;
   public transactionId!: string;
@@ -27,6 +28,10 @@ Payment.init({
     },
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
+  },
+  earnAmount: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
   },
   totalAmount: {
     type: DataTypes.FLOAT,

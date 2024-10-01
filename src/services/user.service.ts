@@ -25,17 +25,67 @@ export default class UserService {
     });
   }
 
+  static async get7thParentUserDetails(userId: number, depth: number = 0): Promise<User | null> {
+    // Base case: if we've reached beyond 7 levels, return null
+    if (depth > 7) return null;
+
+    // Find the current user by userId
+    const currentUser = await User.findOne({ where: { userId } });
+
+    // If no user is found, return null
+    if (!currentUser) return null;
+
+    // If we have reached the 7th level, return the user details
+    if (depth === 7) {
+        return currentUser; // Return the 7th parent user details
+    }
+
+    // If the current user has no parent (parentUserId is null), stop the recursion
+    if (!currentUser.parentUserId) return null;
+
+    // Recursive call to find the next parent user, incrementing the depth
+    return await this.get7thParentUserDetails(currentUser.parentUserId, depth + 1);
+}
+
+
+
+
   static async updateUserStatus(userId: any, status: any) {
-    const user = await User.findByPk(userId);
+    const user: any = await User.findByPk(userId);
+    const referral = await Payment.findOne({ where: { userId: user.parentUserId } });
+    const referee = await Payment.findOne({ where: { userId } });
+
 
     if (!user) {
       throw new Error('User not found');
     }
 
+    if (referral) {
+      const parentUsers:any = await this.get7thParentUserDetails(userId);
+      console.log("parentUsers", parentUsers.userId)
+      const referrralList = await UserService.getReferralChildrenTaskCompleted(parentUsers.parentUserId);
+      const userSeven = referrralList.referrals?.map((res: any) => res.liveReferralCount == 7);
+      console.log("userSeven", userSeven)
+      if (userSeven.includes(true)) {
+        const parentReferral = await Payment.findOne({ where: { userId: referrralList.user?.userId } });
+        if (parentReferral) {
+          parentReferral.earnAmount += 100;
+          await parentReferral.save();
+        }
+
+      }
+      referral.earnAmount += 100;
+      await referral.save();
+    }
+
+    if (referee) {
+      referee.status = 'live'
+      await referee.save();
+    }
+
     user.status = status;
     await user.save();
-
-    return user; // User will automatically only return selected attributes due to the above method definitions
+    return user;
   }
 
   // Create a user with optional referral handling
@@ -75,12 +125,9 @@ export default class UserService {
       const referrer: any = await User.findOne({ where: { referralCode } });
       if (referrer) {
         parentUserId = referrer.userId;
-
-        const payment: any = await PaymentService.findPaymentByUserId(referrer.userId);
-        if (payment.status === 'completed') {
-          payment.totalAmount += 100;
-          await payment.save();
-        }
+        const referrralList = await UserService.getReferralChildrenTaskCompleted(referrer.userId);
+        const userSeven = referrralList.referrals?.map((res: any) => { res.liveReferralCount === 6 });
+        console.log(userSeven)
       }
     }
 
@@ -135,31 +182,61 @@ export default class UserService {
     const initialUser: any = await User.findByPk(userId, {
       attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status'],
     });
-
     return await fetchChain(initialUser);
   }
 
-  static async getReferralChildrenTaskCompleted(userId: number): Promise<{ user: User | null; referrals: any[], completedSixInnerSharing: boolean }> {
-    async function fetchChain(currentUser: User | null): Promise<{ user: User | null; referrals: any[], completedSixInnerSharing: boolean }> {
-      if (!currentUser) return { user: null, referrals: [], completedSixInnerSharing: false };
+  static async getReferralChildrenTaskCompleted(userId: number): Promise<{
+    user: User | null;
+    referrals: any[],
+    liveReferralCount: number // Total live referral count
+  }> {
 
+    // Helper function to recursively fetch the referral chain and count 'live' status referrals
+    async function fetchChain(
+      currentUser: User | null
+    ): Promise<{
+      user: User | null;
+      referrals: any[],
+      liveReferralCount: number // Track the count of 'live' referrals at this level
+    }> {
+      if (!currentUser) {
+        return { user: null, referrals: [], liveReferralCount: 0 };
+      }
+
+      // Fetch immediate referrals for the current user
       const referrals = await User.findAll({
         where: { parentUserId: currentUser.userId },
         attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status'],
       });
 
-      const completedSixInnerSharing = referrals.length >= 6;
-
+      // Recursively fetch each referral's chain
       const referralChain = await Promise.all(referrals.map(async (referral) => await fetchChain(referral)));
 
-      return { user: currentUser, referrals: referralChain, completedSixInnerSharing };
+      // Count only referrals with 'live' status at the current level
+      const liveCountAtCurrentLevel = referrals.filter(referral => referral.status === 'live').length;
+
+      // Sum up 'live' referral counts from all nested chains
+      const liveReferralCount = liveCountAtCurrentLevel + referralChain.reduce((acc, referral) => acc + referral.liveReferralCount, 0);
+
+      return {
+        user: currentUser,
+        referrals: referralChain,
+        liveReferralCount // Return the count of 'live' status referrals
+      };
     }
 
+    // Fetch the initial user to start the chain
     const initialUser: User | null = await User.findByPk(userId, {
       attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status'],
     });
+
     if (!initialUser) throw new Error('User not found');
 
+    // Call the recursive function to fetch chain and count 'live' status referrals
     return await fetchChain(initialUser);
+
   }
+
 }
+
+

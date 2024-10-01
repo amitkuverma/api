@@ -90,6 +90,8 @@ paymentRouter.post('/payment/:userId/upload-receipt', authenticateToken, upload.
  *             properties:
  *               userId:
  *                 type: integer
+ *               earnAmount:
+ *                 type: number
  *               totalAmount:
  *                 type: number
  *               paymentMethod:
@@ -130,6 +132,8 @@ paymentRouter.post('/payment', authenticateToken, PaymentController.createPaymen
  *           schema:
  *             type: object
  *             properties:
+ *               earnAmount:
+ *                 type: number
  *               totalAmount:
  *                 type: number
  *               paymentMethod:
@@ -175,6 +179,8 @@ paymentRouter.put('/payment/:userId', authenticateToken, PaymentController.updat
  *                 properties:
  *                   userId:
  *                     type: integer
+ *                   earnAmount:
+ *                     type: number
  *                   totalAmount:
  *                     type: number
  *                   paymentMethod:
@@ -208,6 +214,8 @@ paymentRouter.get('/payment/:userId', authenticateToken, PaymentController.getPa
  *                 properties:
  *                   userId:
  *                     type: integer
+ *                   earnAmount:
+ *                     type: number
  *                   totalAmount:
  *                     type: number
  *                   paymentMethod:
