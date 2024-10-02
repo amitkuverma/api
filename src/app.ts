@@ -6,6 +6,8 @@ import otpRoutes from './routes/otp.routes';
 import { setupSwagger } from './config/swagger';
 import paymentRouter from './routes/payment.routes';
 import accRouter from './routes/account.routes';
+import transRouter from './routes/transaction.routes';
+import coinRouter from './routes/coin.routes';
 
 const app: Application = express();
 
@@ -14,7 +16,7 @@ app.use(bodyParser.json());
 app.use(corsMiddleware);
 
 // Routes
-app.use('/api', userRoutes, otpRoutes, paymentRouter, accRouter);
+app.use('/api', userRoutes, otpRoutes, paymentRouter, accRouter, transRouter, coinRouter);
 
 // Swagger Docs
 setupSwagger(app);

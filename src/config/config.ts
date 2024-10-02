@@ -49,8 +49,5 @@ const config: Record<Env, {
   },
 };
 
-// Log the complete config object to see if values are assigned correctly
-console.log('Config:', config);
-
 const currentEnv: Env = (process.env.NODE_ENV as Env) || 'development';
 export default config[currentEnv];

@@ -2,29 +2,28 @@ import { Model, DataTypes } from 'sequelize';
 import sequelize from '../../config/database';
 import User from './user.model'; // Ensure the import path is correct
 
-class Payment extends Model {
-  public payId!: number;
+class Transaction extends Model {
+  public transId!: number;
   public userId!: number;
   public userName!: string;
-  public earnAmount!: number;
-  public totalAmount!: number;
-  public paymentMethod!: string;
+  public paymentType!: string;
   public transactionId!: string;
+  public transactionAmount!: string;
   public status!: string;
   public receipt?: string;
 }
 
-Payment.init({
-  payId: {
+Transaction.init({
+  transId: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
   },
   userId: {
-    type: DataTypes.INTEGER.UNSIGNED, // Make sure this matches the User model
+    type: DataTypes.INTEGER.UNSIGNED, // Matches the User model
     allowNull: false,
     references: {
-      model: 'users', // This should refer to the table name, not the model
+      model: 'users', // This should refer to the table name, not the model name
       key: 'userId',
     },
     onDelete: 'CASCADE',
@@ -34,35 +33,32 @@ Payment.init({
     type: DataTypes.STRING,
     allowNull: false,
   },
-  earnAmount: {
-    type: DataTypes.FLOAT,
-    allowNull: false,
-  },
-  totalAmount: {
-    type: DataTypes.FLOAT,
-    allowNull: false,
-  },
-  paymentMethod: {
+  paymentType: {
     type: DataTypes.STRING,
     allowNull: false,
   },
   transactionId: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
+  },
+  transactionAmount: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   status: {
     type: DataTypes.STRING,
     allowNull: false,
+    defaultValue: 'pending'
   },
   receipt: {
     type: DataTypes.STRING,
-    allowNull: true,
+    allowNull: true, // Receipt is optional
   },
 }, {
   sequelize,
-  modelName: 'Payment',
-  tableName: 'payments',
-  timestamps: true, // Optional: if you want createdAt and updatedAt
+  modelName: 'Transaction',
+  tableName: 'transactions', // Ensure the correct table name
+  timestamps: true, // Optional: if you want createdAt and updatedAt fields
 });
 
-export default Payment;
+export default Transaction;

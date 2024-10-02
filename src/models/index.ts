@@ -1,13 +1,15 @@
 import sequelize from '../config/database';
 import User from './user/user.model';
-import defineAssociationsDynamically from '../associations';
 import Payment from './user/payment.model';
 import AccountDetails from './user/account.model';
+import Transaction from './user/transaction.model';
+import defineAssociationsDynamically from '../associations';
 
 const models = {
   User,
   Payment,
-  AccountDetails
+  AccountDetails,
+  Transaction
 };
 
 const modelAssociations = {
@@ -16,12 +18,17 @@ const modelAssociations = {
       {
         targetModel: 'Payment',
         foreignKey: 'userId',
-        as: 'payments' // Alias for the payments relationship
+        as: 'payments', // Alias for the payments relationship
       },
       {
         targetModel: 'AccountDetails',
         foreignKey: 'userId',
-        as: 'accountDetails' // Alias for the account details relationship
+        as: 'accountDetails', // Alias for the account details relationship
+      },
+      {
+        targetModel: 'Transaction',
+        foreignKey: 'userId',
+        as: 'transactions', // Alias for the transactions relationship
       }
     ]
   },
@@ -42,9 +49,17 @@ const modelAssociations = {
         as: 'user' // Alias for the reverse relationship (user)
       }
     ]
+  },
+  Transaction: {
+    belongsTo: [
+      {
+        targetModel: 'User',
+        foreignKey: 'userId',
+        as: 'user' // Alias for the reverse relationship (user)
+      }
+    ]
   }
-};
-
+}
 
 defineAssociationsDynamically(models, modelAssociations);
 

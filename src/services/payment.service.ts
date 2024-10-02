@@ -23,6 +23,7 @@ class PaymentService {
 
   async createPayment(data: {
     userId: number;
+    userName: string;
     earnAmount: number;
     totalAmount: number;
     paymentMethod: string;

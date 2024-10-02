@@ -5,6 +5,7 @@ import User from './user.model'; // Ensure the import path is correct
 class AccountDetails extends Model {
   public accId!: number;
   public userId!: number;
+  public userName!: string;
   public bankName!: string;
   public branchName!: string;
   public accountType!: string;
@@ -28,6 +29,10 @@ AccountDetails.init({
     },
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
+  },
+  userName: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
   bankName: {
     type: DataTypes.STRING,
