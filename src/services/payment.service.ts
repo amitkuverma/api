@@ -9,6 +9,14 @@ class PaymentService {
     return payment;
   }
 
+  async findPaymentById(id: number) {
+    const payment = await Payment.findByPk(id);
+    if (!payment) {
+      throw new Error('User data not found in payment table');
+    }
+    return payment;
+  }
+
   async getPaymentList() {
     return await Payment.findAll();
   }
@@ -34,8 +42,8 @@ class PaymentService {
     return await Payment.create(data);
   }
 
-  async updatePayment(userId: number, updateData: Partial<Payment>) {
-    const payment = await Payment.findByPk(userId);
+  async updatePayment(updateData: Partial<Payment>) {
+    const payment = await Payment.findByPk(updateData.payId);
 
     if (!payment) {
       throw new Error('Payment not found');

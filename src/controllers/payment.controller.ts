@@ -53,10 +53,8 @@ class PaymentController {
   async updatePayment(req: Request, res: Response) {
     try {
       const { userId } = req.params;
-      const { totalAmount, paymentMethod, transactionId } = req.body;
-
       // Ensure that the payment exists before attempting to update
-      const existingPayment = await PaymentService.findPaymentByUserId(Number(userId));
+      const existingPayment = await PaymentService.findPaymentById(Number(userId));
       if (!existingPayment) {
         return res.status(404).json({
           message: 'Payment not found for this user. Use create endpoint instead.',
@@ -64,12 +62,7 @@ class PaymentController {
       }
 
       // Update payment
-      const updatedPayment = await PaymentService.updatePayment(existingPayment.userId, {
-        totalAmount,
-        paymentMethod,
-        transactionId,
-        status: 'completed',
-      });
+      const updatedPayment = await PaymentService.updatePayment(req.body);
 
       return res.status(200).json({
         message: 'Payment updated successfully',
