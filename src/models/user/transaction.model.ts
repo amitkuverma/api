@@ -6,6 +6,7 @@ class Transaction extends Model {
   public transId!: number;
   public userId!: number;
   public userName!: string;
+  public receiverName!: string;
   public paymentType!: string;
   public transactionId!: string;
   public transactionAmount!: string;
@@ -32,6 +33,10 @@ Transaction.init({
   userName: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  receiverName: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   paymentType: {
     type: DataTypes.STRING,

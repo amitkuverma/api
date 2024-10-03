@@ -4,12 +4,14 @@ import Payment from './user/payment.model';
 import AccountDetails from './user/account.model';
 import Transaction from './user/transaction.model';
 import defineAssociationsDynamically from '../associations';
+import Coin from './user/coin.model';
 
 const models = {
   User,
   Payment,
   AccountDetails,
-  Transaction
+  Transaction,
+  Coin
 };
 
 const modelAssociations = {

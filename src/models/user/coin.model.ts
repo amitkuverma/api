@@ -13,6 +13,10 @@ Coin.init({
     autoIncrement: true,
     primaryKey: true
   },
+  coin: {
+    type: DataTypes.FLOAT,
+    allowNull: false
+  },
   coinRate: {
     type: DataTypes.FLOAT,
     allowNull: false
