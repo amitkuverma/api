@@ -19,7 +19,7 @@ app.use(corsMiddleware);
 
 // Routes
 app.use('/api', userRoutes, otpRoutes, paymentRouter, accRouter, transRouter, coinRouter, fileRouter);
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use('/uploads', express.static(path.join(__dirname, './uploads')));
 
 // Swagger Docs
 setupSwagger(app);
