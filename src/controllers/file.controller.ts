@@ -40,10 +40,10 @@ const uploadFile = async (req: Request, res: Response) => {
         // Prepare updated file details
         const updatedFileDetails = {
             filename: req.file.originalname,
-            filepath: req.file.path,
+            filepath: req.file.path.replace(/^.*[\\\/]uploads[\\\/]/, 'uploads/'), // Use absolute path for the file
             mimetype: req.file.mimetype,
         };
-
+        
         let record;
 
         // Find and update the record based on type
