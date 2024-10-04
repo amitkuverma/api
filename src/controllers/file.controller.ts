@@ -74,5 +74,4 @@ const uploadFile = async (req: Request, res: Response) => {
     }
 };
 
-// Export the upload middleware and the upload file controller
 export { upload, uploadFile };
