@@ -1,15 +1,19 @@
 import { Request, Response } from 'express';
 import multer from 'multer';
+import fs from 'fs';
 import path from 'path';
 import User from '../models/user/user.model';
-import Payment from '../models/user/payment.model';
 import Transaction from '../models/user/transaction.model';
 import paymentService from '../services/payment.service';
 
-// Set up multer for file storage
+const uploadsPath = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadsPath)) {
+    fs.mkdirSync(uploadsPath, { recursive: true });
+}
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/'); // Specify the destination folder
+        cb(null, uploadsPath); // Specify the destination folder
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + path.extname(file.originalname)); // Append timestamp to the original file name
