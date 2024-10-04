@@ -14,26 +14,24 @@ if (!fs.existsSync(uploadsPath)) {
     fs.mkdirSync(uploadsPath, { recursive: true });
 }
 
-// Multer storage configuration
+// Multer storage configuration with absolute path
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/receipts'); // Ensure this directory exists
+        cb(null, uploadsPath); // Absolute path to the uploads/receipts directory
     },
     filename: (req, file, cb) => {
         cb(null, `${Date.now()}-${file.originalname}`);
     },
 });
 
-// File filter to accept only certain types (optional)
+// File filter to accept only JPEG, PNG, and PDF files
 const fileFilter = (req: Request, file: Express.Multer.File, cb: FileFilterCallback): void => {
     if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'application/pdf') {
         cb(null, true); // No error, accept file
     } else {
-        const imageTypeMessage:any = "Only JPEG, PNG, and PDF files are allowed"
-        cb(imageTypeMessage, false); // Pass error as a string, reject file
+        //cb("Only JPEG, PNG, and PDF files are allowed", false); // Pass error to multer
     }
 };
-
 
 // Initialize multer
 const upload = multer({ storage, fileFilter });

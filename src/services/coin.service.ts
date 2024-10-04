@@ -1,4 +1,4 @@
-import Coin from '../models/user/payment.model';
+import Coin from '../models/user/coin.model';
 
 class CoinService {
   // Create a new coin
