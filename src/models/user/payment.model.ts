@@ -11,7 +11,9 @@ class Payment extends Model {
   public paymentMethod!: string;
   public transactionId!: string;
   public status!: string;
-  public receipt?: string;
+  public filename?: string;
+  public filepath?: string;
+  public mimetype?: string;
 }
 
 Payment.init({
@@ -54,10 +56,18 @@ Payment.init({
     type: DataTypes.STRING,
     allowNull: false,
   },
-  receipt: {
+  filename: {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  filepath: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  mimetype: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  }
 }, {
   sequelize,
   modelName: 'Payment',

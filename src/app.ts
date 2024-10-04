@@ -8,6 +8,8 @@ import paymentRouter from './routes/payment.routes';
 import accRouter from './routes/account.routes';
 import transRouter from './routes/transaction.routes';
 import coinRouter from './routes/coin.routes';
+import fileRouter from './routes/file.routes';
+import path from 'path';
 
 const app: Application = express();
 
@@ -16,7 +18,8 @@ app.use(bodyParser.json());
 app.use(corsMiddleware);
 
 // Routes
-app.use('/api', userRoutes, otpRoutes, paymentRouter, accRouter, transRouter, coinRouter);
+app.use('/api', userRoutes, otpRoutes, paymentRouter, accRouter, transRouter, coinRouter, fileRouter);
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Swagger Docs
 setupSwagger(app);

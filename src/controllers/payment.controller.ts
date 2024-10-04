@@ -4,24 +4,26 @@ import PaymentService from '../services/payment.service';
 class PaymentController {
   // Upload receipt and update payment
   async uploadReceipt(req: Request, res: Response) {
-    try {
-      const { userId } = req.params;
-      const receiptPath = req.file?.path;
+    // try {
+      
+    //   const { id } = req.params;
+    //   const receiptPath = req.file?.path;
+    //   const type = req.body.type;
 
-      if (!receiptPath) {
-        return res.status(400).json({ message: 'Receipt file is required' });
-      }
+    //   if (!receiptPath) {
+    //     return res.status(400).json({ message: 'Receipt file is required' });
+    //   }
 
-      const payment = await PaymentService.uploadReceipt(Number(userId), receiptPath);
+    //   const payment = await PaymentService.uploadReceipt(Number(id), receiptPath,  type);
 
-      return res.status(200).json({
-        message: 'Receipt uploaded successfully',
-        payment,
-      });
-    } catch (error: any) {
-      console.error('Error uploading receipt:', error.message);
-      return res.status(500).json({ message: error.message });
-    }
+    //   return res.status(200).json({
+    //     message: 'Receipt uploaded successfully',
+    //     payment,
+    //   });
+    // } catch (error: any) {
+    //   console.error('Error uploading receipt:', error.message);
+    //   return res.status(500).json({ message: error.message });
+    // }
   }
 
   // Create a new payment

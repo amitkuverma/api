@@ -12,6 +12,9 @@ class Transaction extends Model {
   public transactionAmount!: string;
   public status!: string;
   public receipt?: string;
+  public filename?: string;
+  public filepath?: string;
+  public mimetype?: string;
 }
 
 Transaction.init({
@@ -55,9 +58,17 @@ Transaction.init({
     allowNull: false,
     defaultValue: 'pending'
   },
-  receipt: {
+  filename: {
     type: DataTypes.STRING,
-    allowNull: true, // Receipt is optional
+    allowNull: true,
+  },
+  filepath: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  mimetype: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
 }, {
   sequelize,

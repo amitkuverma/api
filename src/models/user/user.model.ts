@@ -7,12 +7,14 @@ class User extends Model {
   public email!: string;
   public mobile!: string;
   public password!: string;
-  public image?: string; // Optional field for user image
+  public filename?: string;
+  public filepath?: string;
+  public mimetype?: string;
   public referralCode?: string; // Optional field
   public parentUserId?: number | null; // Optional foreign key reference
   public otp?: string; // Optional OTP field
-  public emailVerified!: boolean; 
-  public status!: string;  
+  public emailVerified!: boolean;
+  public status!: string;
   public isAdmin!: boolean;
 }
 
@@ -48,7 +50,15 @@ User.init({
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
-  image: { // New image column
+  filename: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  filepath: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  mimetype: {
     type: DataTypes.STRING,
     allowNull: true,
   },

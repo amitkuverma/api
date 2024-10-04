@@ -21,14 +21,6 @@ class PaymentService {
     return await Payment.findAll();
   }
 
-  async uploadReceipt(userId: number, receiptPath: string | undefined) {
-    const payment = await this.findPaymentByUserId(userId);
-    payment.receipt = receiptPath;
-    payment.status = "receipt";
-    await payment.save();
-    return payment;
-  }
-
   async createPayment(data: {
     userId: number;
     userName: string;
