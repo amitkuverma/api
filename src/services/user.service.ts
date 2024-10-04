@@ -15,13 +15,13 @@ export default class UserService {
   // Fetch all users with specific fields
   static async getAllUsers() {
     return await User.findAll({
-      attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status'],
+      attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status', 'filepath', 'filename'],
     });
   }
 
   static async getUserById(userId: any) {
     return await User.findByPk(userId, {
-      attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status'],
+      attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status', 'filepath', 'filename'],
     });
   }
 
@@ -149,13 +149,13 @@ export default class UserService {
   static async getReferralChain(userId: number): Promise<{ user: User; referrals: User[] }[]> {
     const referralChain: { user: User; referrals: User[] }[] = [];
     let currentUser: any = await User.findByPk(userId, {
-      attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status'],
+      attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status', 'filepath', 'filename'],
     });
 
     while (currentUser) {
       const referrals = await User.findAll({
         where: { parentUserId: currentUser.userId },
-        attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status'],
+        attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status', 'filepath', 'filename'],
       });
 
       referralChain.push({ user: currentUser, referrals });
@@ -172,7 +172,7 @@ export default class UserService {
 
       const referrals = await User.findAll({
         where: { parentUserId: currentUser.userId },
-        attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status'],
+        attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status', 'filepath', 'filename'],
       });
 
       const referralChain = await Promise.all(referrals.map(async (referral) => await fetchChain(referral)));
@@ -181,7 +181,7 @@ export default class UserService {
     }
 
     const initialUser: any = await User.findByPk(userId, {
-      attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status'],
+      attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status', 'filepath', 'filename'],
     });
     return await fetchChain(initialUser);
   }
@@ -207,7 +207,7 @@ export default class UserService {
       // Fetch immediate referrals for the current user
       const referrals = await User.findAll({
         where: { parentUserId: currentUser.userId },
-        attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status'],
+        attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status', 'filepath', 'filename'],
       });
 
       // Recursively fetch each referral's chain
@@ -228,7 +228,7 @@ export default class UserService {
 
     // Fetch the initial user to start the chain
     const initialUser: User | null = await User.findByPk(userId, {
-      attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status'],
+      attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status', 'filepath', 'filename'],
     });
 
     if (!initialUser) throw new Error('User not found');
