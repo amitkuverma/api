@@ -463,4 +463,38 @@ router.get('/referrals/:userId', authenticateToken, UserController.getUserReferr
 // API to get all the referrals made by a user
 router.get('/referral-children/:userId', authenticateToken, UserController.getReferralChildren);
 
+/**
+ * @swagger
+ * /api/delete/{userId}:
+ *   delete:
+ *     summary: Delete a user profile and their referrals
+ *     description: Deletes the specified user and all referrals made by them.
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The ID of the user to delete
+ *     responses:
+ *       200:
+ *         description: User and their referrals successfully deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User and referrals deleted successfully
+ *       404:
+ *         description: User or referrals not found
+ *       500:
+ *         description: Server error
+ */
+
+// API to get all the referrals made by a user
+router.delete('/delete/:userId', authenticateToken, UserController.deleteUserProfile);
+
 export default router;

@@ -238,6 +238,15 @@ export default class UserService {
 
   }
 
+  static async deleteUser(id: number) {
+    const coin = await User.findByPk(id);
+    if (coin) {
+      await coin.destroy();
+      return { message: 'User deleted successfully' };
+    }
+    throw new Error('User not found');
+  }
+
 }
 
 
