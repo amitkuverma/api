@@ -3,7 +3,7 @@ import { initDb } from './models';
 // import open from 'open';
 import config from './config/config';
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8081;
 
 const startServer = async () => {
   try {
