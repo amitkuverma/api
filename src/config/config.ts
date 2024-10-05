@@ -28,10 +28,10 @@ const config: Record<Env, {
 }> = {
   development: {
     db: {
-      username:  'zxiovrgx_gorkha_coin_db',
-      password: 'ZZLxHLDwhVPtEWgy9Zxt',
-      database:  'zxiovrgx_gorkha_coin_db',
-      host: '127.0.0.1',
+      username:  'sql12732393',
+      password: 'tC6TIGpLNs',
+      database:  'sql12732393',
+      host: 'sql12.freesqldatabase.com',
       dialect: 'mysql',
       port: 3306
       // username: getEnvVar('DB_USER'),       // Get from env
@@ -45,10 +45,10 @@ const config: Record<Env, {
   },
   production: {
     db: {
-      username:  'zxiovrgx_gorkha_coin_db',
-      password: 'ZZLxHLDwhVPtEWgy9Zxt',
-      database:  'zxiovrgx_gorkha_coin_db',
-      host: '127.0.0.1',
+      username:  'sql12732393',
+      password: 'tC6TIGpLNs',
+      database:  'sql12732393',
+      host: 'sql12.freesqldatabase.com',
       dialect: 'mysql',
       port: 3306
     },
