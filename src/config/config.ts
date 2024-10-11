@@ -27,14 +27,14 @@ const config: Record<Env, {
 }> = {
   development: {
     db: {
-      username: 'gorkhacoin',        // User
-      password: 'Gorkhacoin*&5413', // Set this to the actual password you created for the user
-      database: 'gorkhacoin_db',     // Database name
-      host: '88.222.212.197',              // Host
-      dialect: 'mysql',      // Get from env
+      username: getEnvVar('DB_USER'),       // Get from env
+      password: '',   // Get from env
+      database: getEnvVar('DB_NAME'),       // Get from env
+      host: getEnvVar('DB_HOST'),           // Get from env
+      dialect: getEnvVar('DB_DIALECT'),     // Get from env
     },
-    corsOrigin: 'https://api.gorkhacoin.com',   // Get from env
-    swaggerUrl: 'https://api.gorkhacoin.com',    // Get from env
+    corsOrigin: '*',   // Get from env
+    swaggerUrl: getEnvVar('SWAGGER_URL'),    // Get from env
   },
   production: {
     db: {
@@ -44,10 +44,13 @@ const config: Record<Env, {
       host: '88.222.212.197',              // Host
       dialect: 'mysql',     // Get from env
     },
-    corsOrigin: 'https://api.gorkhacoin.com',   // Get from env
+    corsOrigin: '*',   // Get from env
     swaggerUrl: 'https://api.gorkhacoin.com',   // Get from env
   },
 };
 
+
 const currentEnv: Env = (process.env.NODE_ENV as Env) || 'development';
+console.log(config)
+console.log(config)
 export default config[currentEnv];
