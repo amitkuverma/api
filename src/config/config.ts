@@ -38,16 +38,16 @@ const config: Record<Env, {
   },
   production: {
     db: {
-      username: getEnvVar('DB_USER'),       // Get from env
-      password: getEnvVar('DB_PASSWORD'),   // Get from env
-      database: getEnvVar('DB_NAME'),       // Get from env
-      host: getEnvVar('DB_HOST'),           // Get from env
-      dialect: getEnvVar('DB_DIALECT'),     // Get from env
+      username: 'sql12732393',       // Get from env
+      password: 'tC6TIGpLNs',   // Get from env
+      database: 'sql12732393',       // Get from env
+      host: 'sql12.freesqldatabase.com',           // Get from env
+      dialect: 'mysql',     // Get from env
     },
-    corsOrigin: getEnvVar('CORS_ORIGIN'),   // Get from env
-    swaggerUrl: getEnvVar('SWAGGER_URL'),   // Get from env
+    corsOrigin: 'https://api.gorkhacoin.com',   // Get from env
+    swaggerUrl: 'https://api.gorkhacoin.com',   // Get from env
   },
 };
 
-const currentEnv: Env = (process.env.NODE_ENV as Env) || 'development';
+const currentEnv: Env = (process.env.NODE_ENV as Env) || 'production';
 export default config[currentEnv];
