@@ -14,34 +14,34 @@ function getEnvVar(key: string): string {
   return value;
 }
 
-const config: Record<Env, { 
-  db: { 
-    username: string; 
-    password: string; 
-    database: string; 
-    host: string; 
-    dialect: string; 
-  }; 
-  corsOrigin: string; 
-  swaggerUrl: string; 
+const config: Record<Env, {
+  db: {
+    username: string;
+    password: string;
+    database: string;
+    host: string;
+    dialect: string;
+  };
+  corsOrigin: string;
+  swaggerUrl: string;
 }> = {
   development: {
     db: {
-      username: 'gorkhacoin',       // Get from env
-      password: 'Gorkhacoin*&5413',   // Get from env
-      database: 'gorkhacoin_db',       // Get from env
-      host: 'srv613494',           // Get from env
-      dialect: 'mysql',     // Get from env
+      username: 'gorkhacoin',        // User
+      password: 'Gorkhacoin*&5413', // Set this to the actual password you created for the user
+      database: 'gorkhacoin_db',     // Database name
+      host: '88.222.212.197',              // Host
+      dialect: 'mysql',      // Get from env
     },
     corsOrigin: 'https://api.gorkhacoin.com',   // Get from env
     swaggerUrl: 'https://api.gorkhacoin.com',    // Get from env
   },
   production: {
     db: {
-      username: 'gorkhacoin',       // Get from env
-      password: 'Gorkhacoin*&5413',   // Get from env
-      database: 'gorkhacoin_db',       // Get from env
-      host: 'srv613494',           // Get from env
+      username: 'gorkhacoin',        // User
+      password: 'Gorkhacoin*&5413', // Set this to the actual password you created for the user
+      database: 'gorkhacoin_db',     // Database name
+      host: '88.222.212.197',              // Host
       dialect: 'mysql',     // Get from env
     },
     corsOrigin: 'https://api.gorkhacoin.com',   // Get from env
