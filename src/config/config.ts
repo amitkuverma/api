@@ -27,10 +27,10 @@ const config: Record<Env, {
 }> = {
   development: {
     db: {
-      username: 'sql12732393',       // Get from env
-      password: 'tC6TIGpLNs',   // Get from env
-      database: 'sql12732393',       // Get from env
-      host: 'sql12.freesqldatabase.com',           // Get from env
+      username: 'gorkhacoin',       // Get from env
+      password: 'Gorkhacoin*&5413',   // Get from env
+      database: 'gorkhacoin_db',       // Get from env
+      host: 'srv613494',           // Get from env
       dialect: 'mysql',     // Get from env
     },
     corsOrigin: 'https://api.gorkhacoin.com',   // Get from env
@@ -38,10 +38,10 @@ const config: Record<Env, {
   },
   production: {
     db: {
-      username: 'sql12732393',       // Get from env
-      password: 'tC6TIGpLNs',   // Get from env
-      database: 'sql12732393',       // Get from env
-      host: 'sql12.freesqldatabase.com',           // Get from env
+      username: 'gorkhacoin',       // Get from env
+      password: 'Gorkhacoin*&5413',   // Get from env
+      database: 'gorkhacoin_db',       // Get from env
+      host: 'srv613494',           // Get from env
       dialect: 'mysql',     // Get from env
     },
     corsOrigin: 'https://api.gorkhacoin.com',   // Get from env
