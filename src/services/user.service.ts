@@ -68,14 +68,14 @@ export default class UserService {
         if (userSeven.includes(true)) {
           const parentReferral = await Payment.findOne({ where: { userId: referrralList.user?.userId } });
           if (parentReferral) {
-            parentReferral.earnAmount += 100;
+            parentReferral.totalAmount += 100;
             await parentReferral.save();
           }
 
         }
 
       }
-      referral.earnAmount += 100;
+      referral.totalAmount += 100;
       await referral.save();
     }
 
