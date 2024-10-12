@@ -51,6 +51,4 @@ const config: Record<Env, {
 
 
 const currentEnv: Env = (process.env.NODE_ENV as Env) || 'development';
-console.log(config)
-console.log(config)
 export default config[currentEnv];
