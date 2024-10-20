@@ -49,7 +49,7 @@ export default class UserService {
 
 
   static async updateUserStatus(userId: any, status: any) {
-    const user: any = await User.findByPk(userId);
+    const user: any = await User.findOne({ where: userId });
     const referral = await Payment.findOne({ where: { userId: user.parentUserId } });
     const referee = await Payment.findOne({ where: { userId } });
 
