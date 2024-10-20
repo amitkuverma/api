@@ -20,9 +20,7 @@ export default class UserService {
   }
 
   static async getUserById(userId: any) {
-    return await User.findByPk(userId, {
-      attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status', 'filepath', 'filename'],
-    });
+    return await User.findOne({ where: { userId } });
   }
 
   static async get7thParentUserDetails(userId: number, depth: number = 0): Promise<User | null> {
