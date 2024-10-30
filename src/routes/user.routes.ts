@@ -3,6 +3,7 @@ import UserController from '../controllers/user.controller';
 import { login } from '../controllers/login.controller';
 import { authenticateToken } from '../middlewares/auth';
 import OtpVerification from '../controllers/OtpVerification.controller';
+import AuthController from '../controllers/auth.controller';
 
 const router = Router();
 
@@ -300,7 +301,7 @@ router.post('/login', login);
  *       404:
  *         description: User not found
  */
-router.post('/forgot-password', login);
+router.post('/forgot-password', AuthController.forgotPassword);
 
 /**
  * @swagger

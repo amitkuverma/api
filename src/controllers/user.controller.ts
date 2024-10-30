@@ -126,11 +126,11 @@ export default class UserController {
 
   
   static async resetPassword(req: Request, res: Response) {
-    const { userId, token, newPassword } = req.body;
-    const user = await User.findOne({ where: { id: userId, resetToken: token } });
+    const { userId, newPassword } = req.body;
+    const user = await User.findByPk(userId);
     
     // Check if user exists and token is valid
-    if (!user) return res.status(400).json({ message: 'Invalid token or user' });
+    if (!user) return res.status(400).json({ message: 'Invalid user' });
     // if (user.resetTokenExpiry < Date.now()) return res.status(400).json({ message: 'Token expired' });
   
     // Hash the new password
