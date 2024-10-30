@@ -51,26 +51,11 @@ export default class UserService {
     const referral = await Payment.findOne({ where: { userId: user.parentUserId } });
     const referee = await Payment.findOne({ where: { userId } });
 
-
     if (!user) {
       throw new Error('User not found');
     }
 
     if (referral) {
-      const parentUsers: any = await this.get7thParentUserDetails(userId);
-      if (parentUsers) {
-        const referrralList = await UserService.getReferralChildrenTaskCompleted(parentUsers.parentUserId);
-        const userSeven = referrralList.referrals?.map((res: any) => res.liveReferralCount == 7);
-        if (userSeven.includes(true)) {
-          const parentReferral = await Payment.findOne({ where: { userId: referrralList.user?.userId } });
-          if (parentReferral) {
-            parentReferral.totalAmount += 100;
-            await parentReferral.save();
-          }
-
-        }
-
-      }
       referral.totalAmount += 100;
       await referral.save();
     }
