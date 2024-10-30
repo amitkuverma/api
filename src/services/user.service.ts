@@ -1,7 +1,7 @@
 import Payment from '../models/user/payment.model';
 import User from '../models/user/user.model';
 import { hashPassword } from '../utils/authUtils';
-import PaymentService from '../services/payment.service';
+import { sendEmail } from '../utils/email.service';
 
 interface UserRegistrationData {
   name: string;
@@ -20,7 +20,7 @@ export default class UserService {
   }
 
   static async getUserById(userId: any) {
-    return await User.findOne({ where: { userId } });
+    return await User.findByPk(userId);
   }
 
   static async get7thParentUserDetails(userId: number, depth: number = 0): Promise<User | null> {
@@ -44,8 +44,6 @@ export default class UserService {
     // Recursive call to find the next parent user, incrementing the depth
     return await this.get7thParentUserDetails(currentUser.parentUserId, depth + 1);
   }
-
-
 
 
   static async updateUserStatus(userId: any, status: any) {
@@ -87,9 +85,56 @@ export default class UserService {
     return user;
   }
 
+  static async updateUser(userId: any, data: any) {   
+    return User.update(data, { where: { userId: userId } });
+  }
+
+  
   // Create a user with optional referral handling
   static async createUser(data: UserRegistrationData) {
     return await this.registerUserWithReferral(data);
+  }
+
+  private static generateOTP(): string {
+    return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
+  }
+  
+  
+  private static async registerUserWithReferral(data: UserRegistrationData) {
+    const { name, email, mobile, password, referralCode } = data;
+    const hashedPassword = await hashPassword(password);
+    let parentUserId: number | null = null;
+    let otp = this.generateOTP(); // Generate OTP
+    const emailVerified = false;  // Initial verification status
+  
+    if (referralCode) {
+      const referrer: any = await User.findOne({ where: { referralCode } });
+      if (referrer) {
+        parentUserId = referrer.userId;
+      }
+    }
+  
+    const newUser = await User.create({
+      name,
+      email,
+      mobile,
+      password: hashedPassword,
+      parentUserId,
+      referralCode: await this.generateUniqueReferralCode(),
+      otp,                 // Save OTP
+      emailVerified,       // Set verification status to false initially
+    });
+  
+    await newUser.save();
+  
+    // Send OTP email
+    await sendEmail({
+      to: email,
+      subject: 'Verify your email',
+      text: `Your OTP for email verification is: ${otp}`,
+    });
+  
+    return newUser;
   }
 
   private static generateReferralCode(): string {
@@ -115,34 +160,19 @@ export default class UserService {
     return referralCode;
   }
 
-  private static async registerUserWithReferral(data: UserRegistrationData) {
-    const { name, email, mobile, password, referralCode } = data;
-    const hashedPassword = await hashPassword(password);
-    let parentUserId: number | null = null;
-
-    if (referralCode) {
-      const referrer: any = await User.findOne({ where: { referralCode } });
-      if (referrer) {
-        parentUserId = referrer.userId;
-        const referrralList = await UserService.getReferralChildrenTaskCompleted(referrer.userId);
-        const userSeven = referrralList.referrals?.map((res: any) => { res.liveReferralCount === 6 });
-        console.log(userSeven)
-      }
+  static async verifyEmailOtp(userId: number, otp: string): Promise<boolean> {
+    const user:any = await User.findOne({ where: { userId } });
+    if (!user) throw new Error('User not found');
+  
+    if (user.otp === otp) {
+      user.emailVerified = true; // Update verification status
+      user.otp = null;            // Clear OTP after successful verification
+      await user.save();
+      return true;
     }
-
-    const newUser = await User.create({
-      name,
-      email,
-      mobile,
-      password: hashedPassword,
-      parentUserId,
-      referralCode: await this.generateUniqueReferralCode(),
-    });
-
-    await newUser.save();
-
-    return newUser;
+    return false;
   }
+  
 
   static async getReferralChain(userId: number): Promise<{ user: User; referrals: User[] }[]> {
     const referralChain: { user: User; referrals: User[] }[] = [];
@@ -162,7 +192,7 @@ export default class UserService {
     }
 
     return referralChain;
-  }
+  }  
 
   static async getUserReferralChainList(userId: number): Promise<{ user: User; referrals: any[] }> {
     async function fetchChain(currentUser: User): Promise<{ user: User; referrals: any[] }> {
@@ -183,6 +213,39 @@ export default class UserService {
     });
     return await fetchChain(initialUser);
   }
+
+  
+  static async getTreeLengthFromChildUserId(userId: number): Promise<{ user: User | null; chain: User[] }> {
+    async function fetchParentChain(currentUser: User | null, chain: User[] = []): Promise<User[]> {
+      if (!currentUser) return chain;
+  
+      // Add current user to the chain
+      chain.push(currentUser);
+  
+      // Find the parent user
+      const parentUser = await User.findOne({
+        where: { userId: currentUser.parentUserId },
+        attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status', 'filepath', 'filename', 'parentUserId'],
+      });
+  
+      // Recurse upwards to find the full parent chain
+      return fetchParentChain(parentUser, chain);
+    }
+  
+    // Start with the initial user and fetch the chain upwards
+    const initialUser = await User.findByPk(userId, {
+      attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status', 'filepath', 'filename', 'parentUserId'],
+    });
+  
+    // If initialUser is null, return an empty chain
+    if (!initialUser) {
+      return { user: null, chain: [] };
+    }
+  
+    const chain = await fetchParentChain(initialUser);
+    return { user: initialUser, chain };
+  }
+  
 
   static async getReferralChildrenTaskCompleted(userId: number): Promise<{
     user: User | null;
