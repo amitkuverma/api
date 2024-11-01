@@ -65,6 +65,17 @@ export default class UserController {
   }
 
   // Optional: API to get the referrals made by a user
+  static async getReferralParent(req: Request, res: Response) {
+    try {
+      const { userId } = req.params;
+      const referralChildren = await UserService.getUserParentChain(Number(userId));
+
+      res.status(200).json(referralChildren);
+    } catch (error:any) {
+      res.status(500).json({ message: "Error fetching referral children", error: error.message });
+    }
+  }
+
   static async getReferralChildren(req: Request, res: Response) {
     try {
       const { userId } = req.params;

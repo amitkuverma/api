@@ -575,6 +575,51 @@ router.get('/referral-tree/:userId', authenticateToken, UserController.getReferr
 
 /**
  * @swagger
+ * /api/referral-parent/{userId}:
+ *   get:
+ *     summary: Get the referrals made by a user
+ *     description: Retrieve all the users that were referred by a specific user.
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The ID of the user to get referrals made by them
+ *     responses:
+ *       200:
+ *         description: List of users referred by the user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     description: The user's ID
+ *                   name:
+ *                     type: string
+ *                     description: The user's name
+ *                   email:
+ *                     type: string
+ *                     description: The user's email
+ *                   parentUserId:
+ *                     type: integer
+ *                     description: The ID of the user who referred this user
+ *       404:
+ *         description: No referrals found for the user
+ *       500:
+ *         description: Server error
+ */
+
+// API to get all the referrals made by a user
+router.get('/referral-parent/:userId', authenticateToken, UserController.getReferralParent);
+
+/**
+ * @swagger
  * /api/referral-children/{userId}:
  *   get:
  *     summary: Get the referrals made by a user
