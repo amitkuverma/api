@@ -6,6 +6,13 @@ const accRouter = Router();
 
 /**
  * @swagger
+ * tags:
+ *   name: Account
+ *   description: Account management API
+ */
+
+/**
+ * @swagger
  * /api/account:
  *   post:
  *     summary: Create account details
