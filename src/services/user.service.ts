@@ -197,7 +197,7 @@ export default class UserService {
   }
   
 
-  static async getUserReferralChainList(userId: any): Promise<{ user: User | null; referrals: User[] }> {
+  static async getReferralChainList(userId: any): Promise<{ user: User | null; referrals: User[] }> {
     async function fetchChain(currentUser: User | null): Promise<{ user: User; referrals: User[] }> {
       if (!currentUser) {
         // Return a valid structure even when the user is null
@@ -223,25 +223,26 @@ export default class UserService {
     const initialUser: User | null = await User.findByPk(userId);
     return await fetchChain(initialUser);
   }
-  // static async getUserReferralChainList(userId: number): Promise<{ user: User; referrals: any[] }> {
-  //   async function fetchChain(currentUser: User): Promise<{ user: User; referrals: any[] }> {
-  //     if (!currentUser) null;
 
-  //     const referrals = await User.findAll({
-  //       where: { parentUserId: currentUser.userId },
-  //       attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status', 'filepath', 'filename'],
-  //     });
+  static async getUserReferralChainList(userId: number): Promise<{ user: User; referrals: any[] }> {
+    async function fetchChain(currentUser: User): Promise<{ user: User; referrals: any[] }> {
+      if (!currentUser) null;
 
-  //     const referralChain = await Promise.all(referrals.map(async (referral) => await fetchChain(referral)));
+      const referrals = await User.findAll({
+        where: { parentUserId: currentUser.userId },
+        attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status', 'filepath', 'filename'],
+      });
 
-  //     return { user: currentUser, referrals: referralChain };
-  //   }
+      const referralChain = await Promise.all(referrals.map(async (referral) => await fetchChain(referral)));
 
-  //   const initialUser: any = await User.findByPk(userId, {
-  //     attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status', 'filepath', 'filename'],
-  //   });
-  //   return await fetchChain(initialUser);
-  // }
+      return { user: currentUser, referrals: referralChain };
+    }
+
+    const initialUser: any = await User.findByPk(userId, {
+      attributes: ['userId', 'name', 'email', 'mobile', 'emailVerified', 'referralCode', 'createdAt', 'status', 'filepath', 'filename'],
+    });
+    return await fetchChain(initialUser);
+  }
 
   
   static async getTreeLengthFromChildUserId(userId: number): Promise<{ user: User | null; chain: User[] }> {

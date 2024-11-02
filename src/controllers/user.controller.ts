@@ -49,6 +49,21 @@ export default class UserController {
       res.status(500).json({ message: "Error fetching referral chain", error: error.message });
     }
   }
+
+  static async getParentReferralChainList(req: Request, res: Response) {
+    try {
+      const { userId } = req.params; // Get the userId from request params
+      const referralChain = await UserService.getReferralChainList(Number(userId));
+
+      if (!referralChain) {
+        return res.status(404).json({ message: "No referral chain found" });
+      }
+
+      res.status(200).json(referralChain);
+    } catch (error:any) {
+      res.status(500).json({ message: "Error fetching referral chain", error: error.message });
+    }
+  }
   static async getReferralTree(req: Request, res: Response) {
     try {
       const { userId } = req.params;
