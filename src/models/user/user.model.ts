@@ -13,6 +13,7 @@ class User extends Model {
   public referralCode?: string; // Optional field
   public parentUserId?: number | null; // Optional foreign key reference
   public otp?: string; // Optional OTP field
+  public otpExpiry?: Date; // Optional OTP fieldx 
   public emailVerified!: boolean;
   public status!: string;
   public isAdmin!: boolean;
@@ -44,6 +45,10 @@ User.init({
   },
   otp: {
     type: DataTypes.STRING,
+    allowNull: true,
+  },
+  otpExpiry: {
+    type: DataTypes.DATE,
     allowNull: true,
   },
   emailVerified: {

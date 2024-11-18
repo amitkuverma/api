@@ -1,9 +1,8 @@
 import { Router } from 'express';
 import UserController from '../controllers/user.controller';
-import { login } from '../controllers/login.controller';
+import { login, resendOtp, resetPassword, forgotPassword, verifyOTP } from '../controllers/login.controller';
 import { authenticateToken } from '../middlewares/auth';
 import OtpVerification from '../controllers/OtpVerification.controller';
-import AuthController from '../controllers/auth.controller';
 
 const router = Router();
 
@@ -12,6 +11,7 @@ const router = Router();
  * /api/users:
  *   get:
  *     summary: Get all users
+ *      tags: [Users]
  *     security:
  *       - BearerAuth: []  # This adds the Bearer token requirement (LOCK)
  *     description: Retrieve a list of all users from the database.
@@ -45,6 +45,7 @@ router.get('/users', authenticateToken, UserController.getAllUsers);
  * /api/users/{userId}:
  *   get:
  *     summary: Get user by ID
+ *     tags: [Users]
  *     security:
  *       - BearerAuth: []  # This adds the Bearer token requirement (LOCK)
  *     description: Retrieve a user by their ID from the database.
@@ -90,6 +91,7 @@ router.get('/users/:userId', authenticateToken, UserController.getUserById);
  * /api/users/{userId}/status:
  *   put:
  *     summary: Update user status
+ *     tags: [Users]
  *     security:
  *       - BearerAuth: []  # This adds the Bearer token requirement (LOCK)
  *     description: Update the status of a user by their ID.
@@ -131,15 +133,15 @@ router.get('/users/:userId', authenticateToken, UserController.getUserById);
  */
 router.put('/users/:userId/status', authenticateToken, UserController.updateUserStatus);
 
-
 /**
  * @openapi
  * /api/users/{userId}:
  *   put:
- *     summary: Update user status
+ *     summary: Update user details
+ *     tags: [Users]
  *     security:
  *       - BearerAuth: []  # This adds the Bearer token requirement (LOCK)
- *     description: Update the status of a user by their ID.
+ *     description: Update general user details by their ID.
  *     parameters:
  *       - name: userId
  *         in: path
@@ -154,12 +156,15 @@ router.put('/users/:userId/status', authenticateToken, UserController.updateUser
  *           schema:
  *             type: object
  *             properties:
- *               status:
+ *               name:
  *                 type: string
- *                 description: The new status of the user.
+ *                 description: The updated name of the user.
+ *               email:
+ *                 type: string
+ *                 description: The updated email of the user.
  *     responses:
  *       200:
- *         description: User status updated.
+ *         description: User details updated.
  *         content:
  *           application/json:
  *             schema:
@@ -168,9 +173,12 @@ router.put('/users/:userId/status', authenticateToken, UserController.updateUser
  *                 id:
  *                   type: integer
  *                   description: The user's ID.
- *                 status:
+ *                 name:
  *                   type: string
- *                   description: The updated status.
+ *                   description: The updated name of the user.
+ *                 email:
+ *                   type: string
+ *                   description: The updated email of the user.
  *       404:
  *         description: User not found.
  *       500:
@@ -178,11 +186,13 @@ router.put('/users/:userId/status', authenticateToken, UserController.updateUser
  */
 router.put('/users/:userId', UserController.updateUser);
 
+
 /**
  * @openapi
  * /api/register/{referralCode}:
  *   post:
  *     summary: Register a new user
+ *     tags: [Authentication]
  *     description: Registers a new user by providing the necessary details. Optionally, a referral code can be provided.
  *     parameters:
  *       - name: referralCode
@@ -248,6 +258,7 @@ router.post('/register/:referralCode?', UserController.createUser);
  * /api/login:
  *   post:
  *     summary: User login
+ *     tags: [Authentication]
  *     description: Log in a user and return a JWT token.
  *     requestBody:
  *       required: true
@@ -278,9 +289,143 @@ router.post('/login', login);
 
 /**
  * @swagger
- * /forgot-password:
+ * /api/resend-otp:
+ *   post:
+ *     summary: Resend OTP for password reset.
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@example.com
+ *                 description: The registered email address of the user.
+ *     responses:
+ *       200:
+ *         description: OTP resent successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: OTP resent successfully. Check your email.
+ *       400:
+ *         description: Missing email in request body.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Email is required.
+ *       404:
+ *         description: User not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User not found.
+ *       500:
+ *         description: Internal server error.
+ */
+router.post('/resend-otp', resendOtp);
+
+/**
+ * @swagger
+ * /api/reset-password:
+ *   post:
+ *     summary: Reset the user's password using the provided OTP and new password.
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@example.com
+ *                 description: The registered email address of the user.
+ *               otp:
+ *                 type: string
+ *                 example: "123456"
+ *                 description: The OTP sent to the user's email.
+ *               newPassword:
+ *                 type: string
+ *                 example: MySecurePassword123!
+ *                 description: The new password the user wants to set.
+ *     responses:
+ *       200:
+ *         description: Password reset successful.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Password reset successful.
+ *       400:
+ *         description: Invalid input data (e.g., missing fields, weak password).
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: OTP or new password is missing.
+ *       401:
+ *         description: Invalid or expired OTP.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Invalid or expired OTP.
+ *       404:
+ *         description: User not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User not found.
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error.
+ */
+
+router.post('/reset-password', resetPassword);
+
+/**
+ * @swagger
+ * /api/forgot-password:
  *   post:
  *     summary: Initiates a password reset
+ *     tags: [Authentication]
  *     description: Sends a password reset email with a token if the email is registered.
  *     tags:
  *       - User
@@ -301,11 +446,80 @@ router.post('/login', login);
  *       404:
  *         description: User not found
  */
-router.post('/forgot-password', AuthController.forgotPassword);
+router.post('/forgot-password', forgotPassword);
+
+/**
+*  @openapi
+*  /api/verify-otp:
+*    post:
+*      summary: Verify OTP
+*      description: Verifies the OTP sent to the user's email and generates a token upon success.
+*      tags:
+*        - Authentication
+*      requestBody:
+*        required: true
+*        content:
+*          application/json:
+*            schema:
+*              type: object
+*              properties:
+*                otp:
+*                  type: string
+*                  description: The OTP sent to the user.
+*                  example: "123456"
+*                email:
+*                  type: string
+*                  description: The user's email address.
+*                  example: "user@example.com"
+*      responses:
+*        '200':
+*          description: OTP verified successfully
+*          content:
+*            application/json:
+*              schema:
+*                type: object
+*                properties:
+*                  status:
+*                    type: string
+*                    example: "success"
+*                  message:
+*                    type: string
+*                    example: "OTP verified successfully"
+*                  token:
+*                    type: string
+*                    example: "eyJhbGciOiJIUzI1NiIsIn..."
+*        '400':
+*          description: Bad Request - Missing parameters
+*          content:
+*            application/json:
+*              schema:
+*                type: object
+*                properties:
+*                  status:
+*                    type: string
+*                    example: "error"
+*                  message:
+*                    type: string
+*                    example: "OTP and Email are required"
+*        '401':
+*          description: Unauthorized - Invalid OTP
+*          content:
+*            application/json:
+*              schema:
+*                type: object
+*                properties:
+*                  status:
+*                    type: string
+*                    example: "error"
+*                  message:
+*                    type: string
+*                    example: "Invalid OTP or OTP expired"
+ */
+router.post('/verify-otp', verifyOTP);
 
 /**
  * @swagger
- * /reset-password:
+ * /api/reset-internal-password:
  *   post:
  *     summary: Completes password reset with a new password
  *     description: Resets the user password if the provided token is valid.
@@ -336,7 +550,7 @@ router.post('/forgot-password', AuthController.forgotPassword);
  *       400:
  *         description: Invalid or expired token
  */
-router.post('/reset-password', UserController.resetPassword);
+router.post('/reset-internal-password', UserController.resetPassword);
 
 /**
  * @swagger

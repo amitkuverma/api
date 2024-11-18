@@ -91,7 +91,8 @@ export default class UserService {
     let parentUserId: number | null = null;
     let otp = this.generateOTP(); // Generate OTP
     const emailVerified = false;  // Initial verification status
-  
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); 
+
     if (referralCode) {
       const referrer: any = await User.findOne({ where: { referralCode } });
       if (referrer) {
@@ -107,6 +108,7 @@ export default class UserService {
       parentUserId,
       referralCode: await this.generateUniqueReferralCode(),
       otp,                 // Save OTP
+      otpExpiry,
       emailVerified,       // Set verification status to false initially
     });
   
