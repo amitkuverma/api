@@ -68,6 +68,7 @@ export default class UserService {
       }
     }
 
+    user.emailVerified = true;
     user.status = status;
     await user.save();
     return user;
