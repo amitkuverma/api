@@ -7,17 +7,18 @@ import OtpVerification from '../controllers/OtpVerification.controller';
 const router = Router();
 
 /**
- * @openapi
+ * @swagger
  * /api/users:
  *   get:
- *     summary: Get all users
- *      tags: [Users]
+ *     summary: "Get all users."
+ *     description: "Fetches a list of all users from the database."
+ *     tags:
+ *       - Users
  *     security:
- *       - BearerAuth: []  # This adds the Bearer token requirement (LOCK)
- *     description: Retrieve a list of all users from the database.
+ *       - BearerAuth: []  # Adds the Bearer token requirement
  *     responses:
  *       200:
- *         description: A list of users.
+ *         description: "List of users."
  *         content:
  *           application/json:
  *             schema:
@@ -27,16 +28,20 @@ const router = Router();
  *                 properties:
  *                   id:
  *                     type: integer
- *                     description: The user ID.
+ *                     description: "The user ID."
  *                   name:
  *                     type: string
- *                     description: The user's name.
+ *                     description: "The user's name."
  *                   email:
  *                     type: string
- *                     description: The user's email address.
+ *                     description: "The user's email address."
  *                   isAdmin:
  *                     type: boolean
- *                     description: Whether the user is an admin.
+ *                     description: "Whether the user is an admin."
+ *       401:
+ *         description: "Unauthorized access."
+ *       500:
+ *         description: "Internal server error."
  */
 router.get('/users', authenticateToken, UserController.getAllUsers);
 
@@ -344,8 +349,9 @@ router.post('/resend-otp', resendOtp);
  * @swagger
  * /api/reset-password:
  *   post:
- *     summary: Reset the user's password using the provided OTP and new password.
- *     tags: [Authentication]
+ *     summary: "Reset the user's password using the provided OTP and new password."
+ *     tags:
+ *       - Authentication
  *     requestBody:
  *       required: true
  *       content:
@@ -356,18 +362,18 @@ router.post('/resend-otp', resendOtp);
  *               email:
  *                 type: string
  *                 example: user@example.com
- *                 description: The registered email address of the user.
+ *                 description: "The registered email address of the user."
  *               otp:
  *                 type: string
  *                 example: "123456"
- *                 description: The OTP sent to the user's email.
+ *                 description: "The OTP sent to the user's email."
  *               newPassword:
  *                 type: string
- *                 example: MySecurePassword123!
- *                 description: The new password the user wants to set.
+ *                 example: "MySecurePassword123!"
+ *                 description: "The new password the user wants to set."
  *     responses:
  *       200:
- *         description: Password reset successful.
+ *         description: "Password reset successful."
  *         content:
  *           application/json:
  *             schema:
@@ -375,47 +381,15 @@ router.post('/resend-otp', resendOtp);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Password reset successful.
+ *                   example: "Password reset successful."
  *       400:
- *         description: Invalid input data (e.g., missing fields, weak password).
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: OTP or new password is missing.
+ *         description: "Invalid input data (e.g., missing fields, weak password)."
  *       401:
- *         description: Invalid or expired OTP.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Invalid or expired OTP.
+ *         description: "Invalid or expired OTP."
  *       404:
- *         description: User not found.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: User not found.
+ *         description: "User not found."
  *       500:
- *         description: Internal server error.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Internal server error.
+ *         description: "Internal server error."
  */
 
 router.post('/reset-password', resetPassword);
@@ -425,10 +399,8 @@ router.post('/reset-password', resetPassword);
  * /api/forgot-password:
  *   post:
  *     summary: Initiates a password reset
- *     tags: [Authentication]
+ *     tags: Authentication
  *     description: Sends a password reset email with a token if the email is registered.
- *     tags:
- *       - User
  *     requestBody:
  *       required: true
  *       content:

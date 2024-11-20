@@ -11,6 +11,7 @@ class AccountDetails extends Model {
   public accountType!: string;
   public accountHolderName!: string;
   public accountNumber!: string;
+  public role!: string;
   public ifscCode!: string;
 }
 
@@ -57,6 +58,11 @@ AccountDetails.init({
   ifscCode: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  role: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    defaultValue: 'user'
   },
 }, {
   sequelize,
