@@ -1,5 +1,6 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../../config/database';
+import User from './user.model'; // Ensure the import path is correct
 
 class AccountDetails extends Model {
   public accId!: number;
