@@ -82,6 +82,8 @@ accRouter.post('/account', authenticateToken, AccountDetailsController.createAcc
  *                     type: string
  *                   ifscCode:
  *                     type: string
+ *                   role:
+ *                     type: string
  *       401:
  *         description: Unauthorized - Invalid or missing authentication token
  *       404:

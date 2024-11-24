@@ -11,8 +11,8 @@ class AccountDetails extends Model {
   public accountType!: string;
   public accountHolderName!: string;
   public accountNumber!: string;
-  public role!: string;
   public ifscCode!: string;
+  public role!: string;
 }
 
 AccountDetails.init({
