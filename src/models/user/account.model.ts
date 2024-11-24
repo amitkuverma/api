@@ -65,8 +65,8 @@ AccountDetails.init({
   },
 }, {
   sequelize,
-  modelName: 'Accounts',
-  tableName: 'accounts',
+  modelName: 'AccountDetails',
+  tableName: 'account_details',
   timestamps: true, // For createdAt and updatedAt
 });
 
