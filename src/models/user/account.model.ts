@@ -1,6 +1,5 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../../config/database';
-import User from './user.model'; // Ensure the import path is correct
 
 class AccountDetails extends Model {
   public accId!: number;
@@ -66,8 +65,8 @@ AccountDetails.init({
   },
 }, {
   sequelize,
-  modelName: 'AccountDetails',
-  tableName: 'account_details',
+  modelName: 'Accounts',
+  tableName: 'accounts',
   timestamps: true, // For createdAt and updatedAt
 });
 
