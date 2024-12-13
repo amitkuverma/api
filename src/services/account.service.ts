@@ -11,7 +11,7 @@ class AccountDetailsService {
   }
 
   async getAccountDetailsById(id: number) {
-    return AccountDetails.findOne({ where: { userId: id } });
+    return AccountDetails.findByPk(id);
   }
 
   async updateAccountDetails(id: number, data: any) {
