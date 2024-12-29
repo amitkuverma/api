@@ -38,17 +38,29 @@ const uploadFile = async (req: Request, res: Response) => {
 
     try {
         // Prepare updated file details
-        const updatedFileDetails = {
-            filename: req.file.originalname,
-            filepath: req.file.path.replace(/^.*[\\\/]uploads[\\\/]/, 'uploads/'), // Use absolute path for the file
-            mimetype: req.file.mimetype,
-        };
-        
+
+        let updatedFileDetails = {};
+
+        if (type === 'document') {
+            updatedFileDetails = {
+                docname: req.file.originalname,
+                docpath: req.file.path.replace(/^.*[\\\/]uploads[\\\/]/, 'uploads/'), // Use absolute path for the file
+                docmimetype: req.file.mimetype,
+            };
+        }
+        else {
+            updatedFileDetails = {
+                filename: req.file.originalname,
+                filepath: req.file.path.replace(/^.*[\\\/]uploads[\\\/]/, 'uploads/'), // Use absolute path for the file
+                mimetype: req.file.mimetype,
+            };
+        }
         let record;
 
         // Find and update the record based on type
         switch (type) {
             case 'user':
+            case 'document':
                 record = await User.findByPk(id);
                 if (!record) return res.status(404).json({ message: 'User record not found.' });
                 break;

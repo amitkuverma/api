@@ -10,6 +10,9 @@ class User extends Model {
   public filename?: string;
   public filepath?: string;
   public mimetype?: string;
+  public docname?: string;
+  public docpath?: string;
+  public docmimetype?: string;
   public referralCode?: string; // Optional field
   public parentUserId?: number | null; // Optional foreign key reference
   public otp?: string; // Optional OTP field
@@ -64,6 +67,18 @@ User.init({
     allowNull: true,
   },
   mimetype: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  docname: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  docpath: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  docmimetype: {
     type: DataTypes.STRING,
     allowNull: true,
   },
