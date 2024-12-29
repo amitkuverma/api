@@ -155,8 +155,8 @@ export const verifyOTP = async (req: Request, res: Response) => {
   if (email === user.email && otp === user.otp) {
     await user.update({
       emailVerified: true,
-      otp: null,
-      otpExpiry: null,
+      otp: otp,
+      otpExpiry: new Date(Date.now() + 10 * 60 * 1000),
     });
 
     return res.status(200).json({ 
